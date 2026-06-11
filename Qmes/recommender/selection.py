@@ -1,0 +1,180 @@
+"""Qmes/recommender/selection.py
+
+Model selection: LOO evaluation, MI feature selection, classifier pool.
+"""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+from itertools import combinations
+from sklearn.base import clone
+from sklearn.feature_selection import mutual_info_classif
+from sklearn.model_selection import LeaveOneOut
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import (
+    GradientBoostingClassifier, RandomForestClassifier,
+    AdaBoostClassifier, BaggingClassifier,
+)
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+
+
+# ── Classifier pool ──────────────────────────────────────────────────────────
+
+DEFAULT_CLASSIFIERS = {
+    "DT":          DecisionTreeClassifier(random_state=42),
+    "RF":          RandomForestClassifier(n_estimators=100, random_state=42),
+    "GB":          GradientBoostingClassifier(random_state=42),
+    "AdaBoost":    AdaBoostClassifier(
+                       estimator=DecisionTreeClassifier(random_state=42),
+                       random_state=42),
+    "Bagging":     BaggingClassifier(random_state=42),
+    "SVM-linear":  SVC(kernel="linear",  probability=True, random_state=42),
+    "SVM-rbf":     SVC(kernel="rbf",     probability=True, random_state=42),
+    "SVM-sigmoid": SVC(kernel="sigmoid", probability=True, random_state=42),
+    "MLP-small":   MLPClassifier(hidden_layer_sizes=(64, 32),
+                                 max_iter=500, random_state=42),
+    "MLP-large":   MLPClassifier(hidden_layer_sizes=(128, 64, 32),
+                                 max_iter=500, random_state=42),
+    "kNN":         KNeighborsClassifier(),
+    "NearCentroid": NearestCentroid(),
+    "NaiveBayes":  GaussianNB(),
+    "LogReg":      LogisticRegression(max_iter=1000, random_state=42),
+}
+
+
+# ── Feature selection ────────────────────────────────────────────────────────
+
+def select_features_mi(
+    meta_features: np.ndarray,
+    labels: np.ndarray,
+    k_values: list[int] = (5, 10, 15, 20),
+    random_state: int = 42,
+) -> dict[str, list[int]]:
+    """MI-based feature selection.
+
+    Returns
+    -------
+    dict: {"full": all_indices, "top5": [...], "top10": [...], ...}
+    """
+    mi_scores = mutual_info_classif(meta_features, labels, random_state=random_state)
+    ranked = np.argsort(mi_scores)[::-1]
+
+    subsets = {"full": list(range(meta_features.shape[1]))}
+    for k in k_values:
+        if k <= meta_features.shape[1]:
+            subsets[f"top{k}"] = ranked[:k].tolist()
+
+    return subsets
+
+
+# ── LOO evaluation ───────────────────────────────────────────────────────────
+
+def run_loo_evaluation(
+    meta_features: np.ndarray,
+    pivot_scores: pd.DataFrame,
+    classifiers: dict | None = None,
+    feature_subsets: dict[str, list[int]] | None = None,
+    tied_threshold: float = 0.01,
+    verbose: bool = True,
+) -> pd.DataFrame:
+    """Exhaustive LOO evaluation over (classifier × feature_subset).
+
+    Parameters
+    ----------
+    meta_features : (n_datasets, d)
+    pivot_scores : index=circuits, columns=datasets
+    classifiers : dict {name: sklearn_estimator}
+    feature_subsets : dict {label: list_of_indices}
+    tied_threshold : for tied-best evaluation
+    verbose : print progress
+
+    Returns
+    -------
+    DataFrame with columns: Features, Classifier, Single, Tied, Top3_Tied, Mean_Regret
+    """
+    if classifiers is None:
+        classifiers = DEFAULT_CLASSIFIERS
+    if feature_subsets is None:
+        y_single = pivot_scores.idxmax(axis=0).values
+        feature_subsets = select_features_mi(meta_features, y_single)
+
+    circuits = list(pivot_scores.index)
+    datasets = list(pivot_scores.columns)
+    pairs = list(combinations(circuits, 2))
+    n = len(datasets)
+    loo = LeaveOneOut()
+
+    # Precompute
+    y_single = pivot_scores.idxmax(axis=0).values
+    tied_sets = {
+        ds: set(pivot_scores[ds][
+            pivot_scores[ds] >= pivot_scores[ds].max() - tied_threshold
+        ].index)
+        for ds in datasets
+    }
+
+    # Pairwise labels
+    pairwise_y = {}
+    for (c1, c2) in pairs:
+        pairwise_y[(c1, c2)] = np.array([
+            1 if pivot_scores.loc[c1, ds] >= pivot_scores.loc[c2, ds] else 0
+            for ds in datasets
+        ])
+
+    # Evaluate
+    rows = []
+    for feat_label, feat_idx in feature_subsets.items():
+        if verbose:
+            print(f"\n=== [{feat_label}] ===")
+
+        X_sub = meta_features[:, feat_idx]
+
+        for model_name, model in classifiers.items():
+            single_correct = tied_correct = top3_tied = 0
+            total_regret = 0.0
+
+            for train_idx, test_idx in loo.split(meta_features):
+                test_ds = datasets[test_idx[0]]
+                votes = {c: 0 for c in circuits}
+
+                for (c1, c2) in pairs:
+                    clf = clone(model)
+                    clf.fit(X_sub[train_idx], pairwise_y[(c1, c2)][train_idx])
+                    pred = clf.predict(X_sub[test_idx])[0]
+                    if pred == 1:
+                        votes[c1] += 1
+                    else:
+                        votes[c2] += 1
+
+                mv_pred = max(votes, key=votes.get)
+                ranked = sorted(votes, key=votes.get, reverse=True)[:3]
+
+                if mv_pred == y_single[test_idx[0]]:
+                    single_correct += 1
+                if mv_pred in tied_sets[test_ds]:
+                    tied_correct += 1
+                top3_tied += int(any(c in tied_sets[test_ds] for c in ranked))
+                total_regret += (
+                    pivot_scores[test_ds].max() - pivot_scores.loc[mv_pred, test_ds]
+                )
+
+            result = {
+                "Features":    feat_label,
+                "Classifier":  model_name,
+                "Single":      round(single_correct / n, 4),
+                "Tied":        round(tied_correct / n, 4),
+                "Top3_Tied":   round(top3_tied / n, 4),
+                "Mean_Regret": round(total_regret / n, 6),
+            }
+            rows.append(result)
+
+            if verbose:
+                print(f"  [{model_name}] Tied={result['Tied']} "
+                      f"Top3={result['Top3_Tied']} "
+                      f"Regret={result['Mean_Regret']}")
+
+    return pd.DataFrame(rows)

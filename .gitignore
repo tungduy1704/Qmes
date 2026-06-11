@@ -1,0 +1,15 @@
+# Environments
+Qmes_env/
+*.egg-info/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data tải về / artifacts lớn
+data_source/
+*.pkl
+
+# IDE
+.vscode/
