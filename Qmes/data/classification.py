@@ -35,6 +35,42 @@ DATA_DIR = Path(
     )
 )
 
+CACHE_DIR = Path(
+    os.environ.get(
+        "QMATCH_CACHE_DIR",
+        Path(__file__).resolve().parents[2] / "data" / "cache" / "classification",
+    )
+)
+
+def save_cache(datasets: dict[str, tuple[np.ndarray, np.ndarray]]) -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    index = {}
+    for name, (X, y) in datasets.items():
+        safe_name = name.replace(" ", "_").replace("/", "-")
+        np.savez(CACHE_DIR / f"{safe_name}.npz", X=X, y=y)
+        index[safe_name] = name  # safe_name → tên gốc
+    # Lưu index
+    import json
+    with open(CACHE_DIR / "index.json", "w") as f:
+        json.dump(index, f, ensure_ascii=False, indent=2)
+    logger.info("Saved %d datasets to cache: %s", len(datasets), CACHE_DIR)
+
+def load_cache() -> dict[str, tuple[np.ndarray, np.ndarray]] | None:
+    import json
+    index_path = CACHE_DIR / "index.json"
+    if not CACHE_DIR.exists() or not index_path.exists():
+        return None
+    with open(index_path) as f:
+        index = json.load(f)  # {safe_name → tên gốc}
+    datasets = {}
+    for f in sorted(CACHE_DIR.glob("*.npz")):
+        safe_name = f.stem
+        name = index.get(safe_name, safe_name)  # fallback về safe_name nếu không có
+        data = np.load(f)
+        datasets[name] = (data["X"], data["y"])
+    logger.info("Loaded %d datasets from cache: %s", len(datasets), CACHE_DIR)
+    return datasets
+
 MAX_SAMPLES = 300  # cap toàn bộ pipeline (Extractor + Oracle)
 
 # ── Dataset registries ───────────────────────────────────────────────────────
@@ -458,6 +494,11 @@ def load_classification_datasets() -> dict[str, tuple[np.ndarray, np.ndarray]]:
     datasets: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     skipped: list[str] = []
 
+    # Cache check
+    cached = load_cache()
+    if cached is not None:
+        return cached
+    
     # ── 1. sklearn ───────────────────────────────────────────────────────────
     for name, spec in _SKLEARN_DATASETS.items():
         try:
@@ -519,4 +560,5 @@ def load_classification_datasets() -> dict[str, tuple[np.ndarray, np.ndarray]]:
         len(datasets),
         f", skipped {len(skipped)}: {skipped}" if skipped else "",
     )
+    save_cache(datasets)
     return datasets

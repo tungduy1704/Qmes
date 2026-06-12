@@ -135,10 +135,8 @@ class BaseExtractor(ABC):
         try:
             raw = self._extract_raw(X, y)
         except Exception:
-            logger.exception(
-                "%s: extraction failed, returning zeros", self.task_type
-            )
-            raw = np.zeros(expected_dim, dtype=np.float64)
+            logger.exception("%s: extraction failed", self.task_type)
+            raise
 
         # ── Sanitize ────────────────────────────────────────────
         raw = np.asarray(raw, dtype=np.float64).ravel()
