@@ -1,4 +1,4 @@
-"""qmatch/data/preprocessing.py"""
+"""Qmes/data/preprocessing.py"""
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
@@ -6,12 +6,11 @@ from sklearn.impute import SimpleImputer
 
 
 def encode_categoricals(X: pd.DataFrame) -> pd.DataFrame:
-    """LabelEncode tất cả cột object/category."""
+    """LabelEncode for all object/category."""
     X = X.copy()
     for col in X.select_dtypes(include=["object", "category"]).columns:
         X[col] = LabelEncoder().fit_transform(X[col].astype(str))
     return X
-
 
 def impute_and_cast(X: pd.DataFrame, strategy: str = "median") -> pd.DataFrame:
     """Impute missing, cast to float."""
@@ -19,12 +18,7 @@ def impute_and_cast(X: pd.DataFrame, strategy: str = "median") -> pd.DataFrame:
     arr = SimpleImputer(strategy=strategy).fit_transform(X)
     return pd.DataFrame(arr, columns=X.columns)
 
-
 def scale_features(X: np.ndarray, scaler=None):
-    """Fit-transform hoặc transform nếu scaler đã có.
-    
-    Returns: (X_scaled, fitted_scaler)
-    """
     if scaler is None:
         scaler = MinMaxScaler()
         X_scaled = scaler.fit_transform(X)
@@ -32,18 +26,16 @@ def scale_features(X: np.ndarray, scaler=None):
         X_scaled = scaler.transform(X)
     return X_scaled, scaler
 
-
 # ── Time series preprocessing ───────────────────────────────────────────────
-
 def impute_timeseries(X: np.ndarray, strategy: str = "zero") -> np.ndarray:
-    """Impute NaN trong time series 2D (n_samples, n_timesteps).
+    """Impute NaN in time series 2D (n_samples, n_timesteps).
 
     Parameters
     ----------
     strategy : 'zero', 'forward', 'mean'
-        - zero: thay NaN bằng 0
-        - forward: forward-fill theo timestep, NaN đầu fill bằng 0
-        - mean: thay NaN bằng mean của từng series
+        - zero: replace NaN by 0
+        - forward: forward-fill by timestep, first NaN fill by 0
+        - mean: replace NaN by mean of each series
     """
     X = X.copy()
     if not np.isnan(X).any():
@@ -71,13 +63,13 @@ def impute_timeseries(X: np.ndarray, strategy: str = "zero") -> np.ndarray:
 def normalize_timeseries(
     X: np.ndarray, method: str = "zscore"
 ) -> np.ndarray:
-    """Normalize từng series independently.
+    """Normalize each series independently.
 
     Parameters
     ----------
     method : 'zscore', 'minmax'
-        - zscore: (x - mean) / std per series (chuẩn cho catch22/tsfresh)
-        - minmax: scale về [0, 1] per series
+        - zscore: (x - mean) / std per series (standard for catch22/tsfresh)
+        - minmax: scale [0, 1] per series
     """
     X = X.copy().astype(np.float64)
 
