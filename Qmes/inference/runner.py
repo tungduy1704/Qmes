@@ -16,7 +16,7 @@ from Qmes.data.preprocessing import encode_categoricals, impute_and_cast
 
 logger = logging.getLogger(__name__)
 
-MAX_SAMPLES = 300
+MAX_SAMPLES = 600
 
 def preprocess_new_dataset(
     X: np.ndarray | pd.DataFrame,
@@ -90,6 +90,13 @@ def recommend(
         X, y = preprocess_new_dataset(X, y, stratify=stratify)
 
     result = extractor.extract(X, y)
+    expected = getattr(recommender, "feature_names", None)
+    if expected is not None and list(result.feature_names) != list(expected):
+        raise ValueError(
+            f"Feature-name mismatch giữa extractor và recommender:\n"
+            f"  extractor : {result.feature_names}\n"
+            f"  recommender: {expected}"
+        )
     pred = recommender.predict(result.vector, top_k=top_k)
     pred["meta_features"] = result.vector
     return pred
