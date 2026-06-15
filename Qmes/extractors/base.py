@@ -1,16 +1,16 @@
-"""qmatch/extractors/base.py
+"""Qmes/extractors/base.py
 
-Abstract base class cho tất cả task-specific extractors.
-Mỗi extractor nhận raw data từ data loader, trả về fixed-length
-meta-feature vector cùng danh sách tên feature tương ứng.
+Abstract base class for all task-specific extractors.
+Each extractor receives raw data from the data loader and returns a fixed-length
+meta-feature vector along with the corresponding feature names.
 
 Output: (vector: np.ndarray shape (d,), feature_names: list[str])
-    - d cố định cho mỗi task type, nhưng KHÁC NHAU giữa các task types
-    - feature_names luôn có len == d
-    - NaN/Inf trong vector được thay bằng 0.0 (fallback an toàn)
+    - d is fixed per task type, but DIFFERS across task types
+    - feature_names always has len == d
+    - NaN/Inf in the vector are replaced with 0.0 (safe fallback)
 
-Scaling: mỗi concrete extractor tự lo scaling nội bộ trước khi tính.
-Base class KHÔNG scale — vì mỗi thư viện cần convention khác nhau.
+Scaling: each concrete extractor handles its own internal scaling.
+Base class does NOT scale — each library requires different conventions.
 """
 from __future__ import annotations
 
@@ -27,14 +27,14 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class ExtractionResult:
-    """Container cho kết quả extraction.
+    """Container for extraction results.
 
     Attributes
     ----------
     vector : ndarray shape (d,), float64
         Meta-feature vector. Guaranteed: no NaN, no Inf.
     feature_names : list[str]
-        Tên từng feature, len == len(vector).
+        Feature names, len == len(vector).
     task_type : str
         Task type identifier (e.g. "classification", "timeseries").
     """
@@ -60,19 +60,19 @@ class ExtractionResult:
 
 
 class BaseExtractor(ABC):
-    """Abstract base class cho task-specific meta-feature extractors.
+    """Abstract base class for task-specific meta-feature extractors.
 
-    Subclass cần implement:
+    Subclasses must implement:
         - task_type (property): str identifier
-        - _feature_names (property): list tên features (cố định)
-        - _extract_raw(X, y): tính meta-features, trả ndarray
+        - _feature_names (property): list of feature names (fixed-length)
+        - _extract_raw(X, y): compute meta-features, return ndarray
 
     Lifecycle:
-        1. User gọi extract(X, y) hoặc extract(X)
-        2. Base class validate input
-        3. Gọi _extract_raw(X, y) → raw vector
-        4. Sanitize (NaN/Inf → 0.0)
-        5. Wrap trong ExtractionResult
+        1. User calls extract(X, y) or extract(X)
+        2. Base class validates input
+        3. Calls _extract_raw(X, y) → raw vector
+        4. Sanitizes (NaN/Inf → 0.0)
+        5. Wraps in ExtractionResult
     """
 
     @property
@@ -164,7 +164,7 @@ class BaseExtractor(ABC):
                 "%s: %d non-finite values replaced with 0.0: %s",
                 self.task_type,
                 n_bad,
-                bad_names[:5],  # log tối đa 5 tên
+                bad_names[:5], 
             )
             raw[bad_mask] = 0.0
 
@@ -178,20 +178,20 @@ class BaseExtractor(ABC):
         self,
         datasets: dict[str, Union[np.ndarray, tuple[np.ndarray, ...]]],
     ) -> pd.DataFrame:
-        """Extract meta-features cho tất cả datasets, trả DataFrame.
+        """Extract meta-features for all datasets, returns a DataFrame.
 
         Parameters
         ----------
         datasets : dict[name, data]
-            Output từ data loader. Giá trị có thể là:
-            - tuple (X, y) hoặc (X, Y) — supervised tasks
+            Output from data loader. Values can be:
+            - tuple (X, y) or (X, Y) — supervised tasks
             - ndarray X — unsupervised tasks (clustering)
 
         Returns
         -------
         DataFrame shape (n_datasets, d)
             Index = dataset names, columns = feature names.
-            Giống format meta-dataset trong paper:
+            Follows the meta-dataset format from the paper:
 
             |                  | f1     | f1v    | ... | kolmogorov |
             |------------------|--------|--------|-----|------------|
