@@ -1,12 +1,12 @@
-"""qmatch/extractors/classification.py
+"""Qmes/extractors/classification.py
 
-Meta-feature extraction cho tabular classification.
-Dùng problexity (22 Lorena complexity measures) + 2 custom metrics từ Qsun.
+Meta-feature extraction for tabular classification.
+Uses problexity (22 Lorena complexity measures) + 2 custom metrics from Qsun.
 
-Input: X (n_samples, n_features), y (n_samples,) — binary hoặc multiclass
+Input : X (n_samples, n_features), y (n_samples,) — binary or multiclass
 Output: 24-dim vector
 
-Scaling: problexity cần data trong [0, 1]. Extractor tự scale nội bộ.
+Scaling: problexity requires data in [0, 1]. Extractor handles scaling internally.
 
 Dependencies: problexity, sklearn
 """
@@ -17,7 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from Qmes.extractors.base import BaseExtractor
 
-# ── 22 Lorena measures (problexity ordering) ────────────────────────────────
+# ── 22 Lorena measures ────────────────────────────────
 _PROBLEXITY_NAMES: list[str] = [
     # Feature-based (F)
     "f1", "f1v", "f2", "f3", "f4",
@@ -34,31 +34,43 @@ _PROBLEXITY_NAMES: list[str] = [
     "c1", "c2",
 ]
 
-# 2 custom metrics (from Qsun/Qdata.py — prior paper)
+_PX_EXPECTED_KEYS: list[str] = [
+    "clsCoef" if n == "cls_coef" else n for n in _PROBLEXITY_NAMES
+]
+
+# 2 custom metrics (from Qsun/Qdata.py)
 _CUSTOM_NAMES: list[str] = ["dim_eff", "kolmogorov"]
 
 _ALL_NAMES: list[str] = _PROBLEXITY_NAMES
+_STOCHASTIC_NAMES = ("l3", "n4") 
+_STOCHASTIC_IDX = tuple(_PROBLEXITY_NAMES.index(nm) for nm in _STOCHASTIC_NAMES)
+_K_SEEDS = 10
 
 
-def _compute_problexity(X: np.ndarray, y: np.ndarray) -> np.ndarray:
-    """Compute 22 Lorena complexity measures via problexity.
+_STOCHASTIC_IDX = (7, 11)   # l3, n4: stochastic metrics excluded for determinism
+_K_SEEDS = 10
 
-    X phải đã scale về [0, 1].
-    """
+def _compute_problexity(X: np.ndarray, y: np.ndarray, k_seeds: int = _K_SEEDS) -> np.ndarray:
+    """22 Lorena complexity measures; l3/n4 (stochastic) averaged over k_seeds for stability."""
     import problexity as px
-
-    cc = px.ComplexityCalculator()
-    cc.fit(X, y)
-    # cc.complexity trả list 22 giá trị theo thứ tự chuẩn
-    return np.array(cc.complexity, dtype=np.float64)
+    runs = []
+    for s in range(k_seeds):
+        np.random.seed(s)
+        cc = px.ComplexityCalculator(); cc.fit(X, y)
+        if s == 0 and list(cc.report()["complexities"].keys()) != _PX_EXPECTED_KEYS:
+            raise RuntimeError("problexity metric order đã đổi — positional labeling sai")
+        runs.append(np.asarray(cc.complexity, dtype=np.float64))
+    runs = np.vstack(runs)            # (K, 22)
+    out = runs[0].copy()              # 20 deterministic features — identical across all seeds
+    for j in _STOCHASTIC_IDX:
+        out[j] = runs[:, j].mean()    # average l3, n4 separately across seeds
+    return out
 
 class ClassificationExtractor(BaseExtractor):
-    """Meta-feature extractor cho tabular classification.
+    """Meta-feature extractor for tabular classification.
 
-    Produces 24-dim vector:
-        [22 Lorena measures] + [dim_eff, kolmogorov]
-
-    Consistent với prior paper (200-dataset benchmark).
+    Produces 22-dim vector:
+        [22 Lorena measures]
     """
 
     @property
