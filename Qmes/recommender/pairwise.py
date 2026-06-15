@@ -1,7 +1,6 @@
 """Qmes/recommender/pairwise.py
 
-Pairwise OvO recommender: trains one binary classifier per circuit pair,
-aggregates votes to rank circuits.
+Pairwise OvO recommender: trains one binary classifier per circuit pair, aggregates votes to rank circuits.
 """
 from __future__ import annotations
 
@@ -34,10 +33,12 @@ class PairwiseRecommender:
         classifier,
         feature_indices: list[int] | None = None,
         tied_threshold: float = 0.01,
+        feature_names: list[str] | None = None,
     ):
         self.classifier = classifier
         self.feature_indices = feature_indices
         self.tied_threshold = tied_threshold
+        self.feature_names = feature_names
 
         # Set after fit()
         self.circuits_: list[str] = []
