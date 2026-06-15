@@ -14,6 +14,7 @@ Sources:
     - CSV files (local, path from QMATCH_DATA_DIR)
     - Synthetic (sklearn.datasets generators)
 """
+
 from __future__ import annotations
 
 import logging
@@ -473,12 +474,12 @@ def _load_synthetic(generator, params, random_state=42):
     return X.astype(np.float64), y.astype(int)
 
 def load_classification_datasets() -> dict[str, tuple[np.ndarray, np.ndarray]]:
-    """Load tất cả binary classification datasets, đã subsample về MAX_SAMPLES.
+    """Load all binary classification datasets, subsampled to MAX_SAMPLES.
 
     Returns
     -------
-    dict[str, (X, y)]
-        X : ndarray shape (n_samples, n_features), float64, RAW (chưa scale)
+    dict[str, tuple[ndarray, ndarray]]
+        X : ndarray shape (n_samples, n_features), float64, RAW (unscaled)
             n_samples <= MAX_SAMPLES
         y : ndarray shape (n_samples,), int {0, 1}
     """
