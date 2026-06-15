@@ -1,4 +1,4 @@
-"""qmatch/data/classification.py
+"""Qmes/data/classification.py
 
 Data loader for tabular binary classification datasets.
 Returns RAW (X, y) — scaling/normalization is NOT performed here.
