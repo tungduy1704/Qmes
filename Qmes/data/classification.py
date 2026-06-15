@@ -1,17 +1,17 @@
 """qmatch/data/classification.py
 
-Data loader cho tabular binary classification datasets.
-Trả về RAW (X, y) — scaling/normalization KHÔNG làm ở đây.
-Extractor và Oracle tự lo scaling theo nhu cầu riêng.
+Data loader for tabular binary classification datasets.
+Returns RAW (X, y) — scaling/normalization is NOT performed here.
+Extractor and Oracle handle their own scaling as needed.
 
-Subsample policy: mỗi dataset được cap tối đa MAX_SAMPLES=300 (stratified)
-ngay tại loader. Cả Extractor lẫn Oracle đều nhận data đã capped —
-không tự subsample thêm.
+Subsampling policy: each dataset is capped at MAX_SAMPLES=600 (stratified)
+at load time. Both Extractor and Oracle receive pre-capped data —
+no additional subsampling is done downstream.
 
 Sources:
     - sklearn built-ins (Iris, Wine, Digits, Breast Cancer)
     - UCI ML Repository (via ucimlrepo)
-    - CSV files (local, path từ QMATCH_DATA_DIR)
+    - CSV files (local, path from QMATCH_DATA_DIR)
     - Synthetic (sklearn.datasets generators)
 """
 from __future__ import annotations
@@ -48,8 +48,8 @@ def save_cache(datasets: dict[str, tuple[np.ndarray, np.ndarray]]) -> None:
     for name, (X, y) in datasets.items():
         safe_name = name.replace(" ", "_").replace("/", "-")
         np.savez(CACHE_DIR / f"{safe_name}.npz", X=X, y=y)
-        index[safe_name] = name  # safe_name → tên gốc
-    # Lưu index
+        index[safe_name] = name  
+
     import json
     with open(CACHE_DIR / "index.json", "w") as f:
         json.dump(index, f, ensure_ascii=False, indent=2)
@@ -61,20 +61,19 @@ def load_cache() -> dict[str, tuple[np.ndarray, np.ndarray]] | None:
     if not CACHE_DIR.exists() or not index_path.exists():
         return None
     with open(index_path) as f:
-        index = json.load(f)  # {safe_name → tên gốc}
+        index = json.load(f)  
     datasets = {}
     for f in sorted(CACHE_DIR.glob("*.npz")):
         safe_name = f.stem
-        name = index.get(safe_name, safe_name)  # fallback về safe_name nếu không có
+        name = index.get(safe_name, safe_name)  
         data = np.load(f)
         datasets[name] = (data["X"], data["y"])
     logger.info("Loaded %d datasets from cache: %s", len(datasets), CACHE_DIR)
     return datasets
 
-MAX_SAMPLES = 300  # cap toàn bộ pipeline (Extractor + Oracle)
+MAX_SAMPLES = 600 
 
 # ── Dataset registries ───────────────────────────────────────────────────────
-
 _SKLEARN_DATASETS: dict[str, dict] = {
     "Iris_01":          {"loader": "load_iris",   "classes": [0, 1]},
     "Iris_02":          {"loader": "load_iris",   "classes": [0, 2]},
@@ -90,7 +89,7 @@ _SKLEARN_DATASETS: dict[str, dict] = {
     "Breast Cancer":    {"loader": "load_breast_cancer"},
 }
 
-# UCI datasets — target_map dùng khi label không phải binary rõ ràng
+# UCI datasets 
 _UCI_DATASETS: dict[str, dict] = {
     "Ionosphere":           {"data_id": 52},
     "Statlog Heart":        {"data_id": 145},
@@ -329,7 +328,6 @@ _SYNTHETIC_DATASETS: dict[str, dict] = {
 }
 
 # ── Custom synthetic generators ──────────────────────────────────────────────
-
 def _make_xor(n_samples=300, noise=0.15, n_noise_dims=0, random_state=42):
     rng = np.random.default_rng(random_state)
     n = n_samples // 4
@@ -384,7 +382,6 @@ def _make_moons_rotated(n_samples=300, noise=0.15, n_dims=5, random_state=42):
     return X_nd.astype(np.float64), y
 
 # ── Internal helpers ─────────────────────────────────────────────────────────
-
 def _stratified_subsample(
     X: np.ndarray,
     y: np.ndarray,
@@ -401,7 +398,6 @@ def _stratified_subsample(
         random_state=random_state,
     )
     return X_sub, y_sub
-
 
 def _load_csv(
     path: Path,
@@ -446,7 +442,6 @@ def _load_uci(
             )
         y = y_series.map({unique_vals[0]: 0, unique_vals[1]: 1})
 
-    # Drop rows mà y không được map (NaN) — handle cả "nan" class lẫn unmapped target_map
     valid_mask = y.notna()
     y = y[valid_mask].reset_index(drop=True)
     X_df = X_df[valid_mask].reset_index(drop=True)
@@ -476,8 +471,6 @@ def _load_synthetic(generator, params, random_state=42):
         raise ValueError(f"Unknown generator: {generator!r}")
     X, y = _generators[generator](**params, random_state=random_state)
     return X.astype(np.float64), y.astype(int)
-
-# ── Public API ───────────────────────────────────────────────────────────────
 
 def load_classification_datasets() -> dict[str, tuple[np.ndarray, np.ndarray]]:
     """Load tất cả binary classification datasets, đã subsample về MAX_SAMPLES.
