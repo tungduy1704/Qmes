@@ -14,3 +14,9 @@ data_source/
 # IDE
 .vscode/
 data/cache/
+
+# .gitignore
+scripts/check_*.py
+scripts/test_*.py
+scripts/test_*.ipynb
+
