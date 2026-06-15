@@ -8,10 +8,13 @@ import pandas as pd
 from Qmes.data.classification import load_classification_datasets
 from Qmes.extractors.classification import ClassificationExtractor
 
+import warnings
+warnings.filterwarnings("ignore", message="More than 30% of hub", category=RuntimeWarning)
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("run_extractor_clf")
 
-OUT = Path(__file__).resolve().parents[1] / "results" / "meta_dataset_classification_single.csv"
+OUT = Path(__file__).resolve().parents[1] / "results" / "meta_dataset_classification_single_avg_600samples.csv"
 
 
 def main():
@@ -35,9 +38,8 @@ def main():
     df = pd.DataFrame.from_dict(rows, orient="index", columns=feature_names)
     df.index.name = "dataset"
 
-    # ── Checkpoint tự động ──
     print("\n=== CHECKPOINT ===")
-    print(f"Shape: {df.shape}  (kỳ vọng (106, 22))")          # ← sửa 85 → 106
+    print(f"Shape: {df.shape}  (kỳ vọng ({len(datasets)-len(failed)}, 22))")        
     print(f"Failed: {failed if failed else 'none'}")
     nan_cols = df.columns[df.isna().any()].tolist()
     if nan_cols:
@@ -45,7 +47,7 @@ def main():
         print(df[df.isna().any(axis=1)].index.tolist())
     else:
         print("NaN: none")
-    zero_rows = df.index[(df == 0).all(axis=1)].tolist()       # ← thêm 3 dòng này
+    zero_rows = df.index[(df == 0).all(axis=1)].tolist()
     if zero_rows:
         print(f"⚠ {len(zero_rows)} hàng TOÀN SỐ 0 (extraction fail bị nuốt): {zero_rows}")
     else:
