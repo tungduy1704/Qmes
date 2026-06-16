@@ -1,17 +1,4 @@
-"""qmatch/extractors — Task-specific meta-feature extraction.
-
-Mỗi task type có một extractor riêng, kế thừa từ BaseExtractor.
-Tất cả trả về ExtractionResult(vector, feature_names, task_type).
-
-Usage:
-    from qmatch.extractors import get_extractor
-
-    ext = get_extractor("classification")
-    result = ext.extract(X, y)
-    print(result.vector.shape)       # (24,)
-    print(result.feature_names)      # ['f1', 'f1v', ...]
-    print(result.to_dict())          # {'f1': 0.82, 'f1v': 0.91, ...}
-"""
+"""Task-specific meta-feature extraction."""
 from Qmes.extractors.base import BaseExtractor, ExtractionResult
 from Qmes.extractors.classification import ClassificationExtractor
 from Qmes.extractors.regression import RegressionExtractor
@@ -29,9 +16,8 @@ _REGISTRY: dict[str, type[BaseExtractor]] = {
     "anomaly": AnomalyExtractor,
 }
 
-
 def get_extractor(task_type: str, **kwargs) -> BaseExtractor:
-    """Factory: lấy extractor theo task type.
+    """Return the extractor for the given task type.
 
     Parameters
     ----------
@@ -65,7 +51,6 @@ def get_extractor(task_type: str, **kwargs) -> BaseExtractor:
         )
 
     return _REGISTRY[normalized](**kwargs)
-
 
 __all__ = [
     "BaseExtractor",
