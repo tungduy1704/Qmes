@@ -1,6 +1,6 @@
-"""Qmes/oracle/classification.py
+"""Qmes/evaluators/classification.py
 
-Oracle cho binary classification: quantum kernel + SVC.
+Oracle for binary classification: quantum fidelity kernel + SVC.
 """
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ from Qmes.circuits.registry import (
     get_circuit_fn,
 )
 from Qmes.evaluators.base import BaseEvaluator
-
 
 class ClassificationEvaluator(BaseEvaluator):
 
