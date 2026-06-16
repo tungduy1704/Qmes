@@ -126,11 +126,13 @@ Numbered scripts under `scripts/clf/` and `scripts/reg/` run the full offline wo
 Qmes/                          # installable package
 ├── __init__.py                # sets __version__ only (no re-exports)
 ├── Qsun/                      # bundled quantum simulator
-│   ├── Qencodes.py            # encoding circuits used by the pool
-│   ├── Qkernels.py            # state_product / fidelity kernel
-│   ├── Qcircuit.py  Qgates.py  Qmeas.py  Qwave.py  Qdata.py
-│   ├── Qiqp.py                # IQP circuit class — bundled, NOT in the 7-circuit pool
-│   └── qcit_gate_walk.py      # quantum-walk utility — legacy, unused by the pipeline
+│   ├── Qencodes.py            
+│   ├── Qkernels.py          
+│   ├── Qcircuit.py  
+|   |── Qgates.py  
+|   |── Qmeas.py  
+|   |── Qwave.py  
+|   |── Qdata.py
 ├── circuits/
 │   └── registry.py            # CIRCUIT_POOL (7 circuits), compute_kernel_matrix()
 ├── data/
