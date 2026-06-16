@@ -197,11 +197,11 @@ pyproject.toml
 - **Le Bin Ho** ⁵,⁶
 - **Lan Nguyen Tran** ¹,²
 
-¹ University of Science, Vietnam National University, Ho Chi Minh City, Vietnam
-² Vietnam National University, Ho Chi Minh City, Vietnam
-³ Institute of Fundamental and Applied Sciences, Duy Tan University, Ho Chi Minh City, Vietnam
-⁴ University of Information Technology, Vietnam National University, Ho Chi Minh City, Vietnam
-⁵ Graduate School of Engineering, Tohoku University, Sendai, Japan
+¹ University of Science, Vietnam National University, Ho Chi Minh City, Vietnam<br>
+² Vietnam National University, Ho Chi Minh City, Vietnam<br>
+³ Institute of Fundamental and Applied Sciences, Duy Tan University, Ho Chi Minh City, Vietnam<br>
+⁴ University of Information Technology, Vietnam National University, Ho Chi Minh City, Vietnam<br>
+⁵ Graduate School of Engineering, Tohoku University, Sendai, Japan<br>
 ⁶ Frontier Research Institute for Interdisciplinary Sciences, Tohoku University, Sendai, Japan
 
 The bundled **Qsun** simulator is the work of Nguyen Q. C., Ho L. B., Nguyen Tran L., and Nguyen H. Q. — please cite it separately (below).
