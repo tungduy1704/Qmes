@@ -68,7 +68,7 @@ All circuits except `unit` scale inputs to `[0, π]`. The pool is defined in `Qm
 - **Evaluator** (`RegressionEvaluator`): KernelRidge with a **precomputed quantum fidelity kernel**, 3-fold KFold CV, same `StandardScaler → PCA → MinMaxScaler` order. Primary metric: **R²** (also reports RMSE, MAE).
 - **Recommender**: pairwise One-vs-One.
 
-> Note: both task types use **quantum-kernel methods** as the Oracle, not variational circuits. A fixed-kernel Oracle is deterministic and isolates the contribution of the *encoding* (no trainable ansatz parameters to confound the signal).
+> Note: both task types use **quantum-kernel methods** as the evaluator, not variational circuits. A fixed-kernel evaluator is deterministic and isolates the contribution of the *encoding* (no trainable ansatz parameters to confound the signal).
 
 ---
 
