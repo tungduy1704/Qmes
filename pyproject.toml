@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-scripts = ["scipy>=1.7"]   # chỉ scripts/ cần, không phải runtime của package
+scripts = ["scipy>=1.7"]  
 
 [build-system]
 requires = ["setuptools>=64"]
