@@ -19,7 +19,7 @@ CIRCUIT_POOL = {
     "HD":   lambda x: HighDim_encode(x),
 }
 
-# Circuits dùng range [0, 1] thay vì [0, π]
+# Circuits uses range [0, 1] instead of [0, π]
 UNIT_RANGE_CIRCUITS = {"unit"}
 
 def get_circuit_names() -> list[str]:
