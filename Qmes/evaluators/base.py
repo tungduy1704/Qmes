@@ -1,7 +1,4 @@
-"""Qmes/oracle/base.py
-
-Abstract base class cho Oracle — đánh giá circuit performance trên dataset.
-"""
+"""Qmes/evaluators/base.py"""
 from __future__ import annotations
 
 import logging
@@ -13,7 +10,6 @@ import pandas as pd
 from Qmes.circuits.registry import CIRCUIT_POOL, get_circuit_names
 
 logger = logging.getLogger(__name__)
-
 
 class BaseEvaluator(ABC):
     """Evaluate all circuits on a dataset, return performance scores."""
