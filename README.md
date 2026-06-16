@@ -187,3 +187,58 @@ pyproject.toml
 
 ## Theoretical grounding
 
+---
+
+## Authors
+
+- **Dao Duy Tung** ¹,² — *lead developer*
+- **Nguyen Quoc Chuong** ³ — *corresponding author*
+- **Vu Tuan Hai** ⁴,²
+- **Le Bin Ho** ⁵,⁶
+- **Lan Nguyen Tran** ¹,²
+
+¹ University of Science, Vietnam National University, Ho Chi Minh City, Vietnam
+² Vietnam National University, Ho Chi Minh City, Vietnam
+³ Institute of Fundamental and Applied Sciences, Duy Tan University, Ho Chi Minh City, Vietnam
+⁴ University of Information Technology, Vietnam National University, Ho Chi Minh City, Vietnam
+⁵ Graduate School of Engineering, Tohoku University, Sendai, Japan
+⁶ Frontier Research Institute for Interdisciplinary Sciences, Tohoku University, Sendai, Japan
+
+The bundled **Qsun** simulator is the work of Nguyen Q. C., Ho L. B., Nguyen Tran L., and Nguyen H. Q. — please cite it separately (below).
+
+## Citation
+
+If you use Qmes in your research, please cite the accompanying paper:
+
+​```bibtex
+@misc{tung2026automatedselectionquantumencoding,
+  title         = {Towards Automated Selection of Quantum Encoding Circuits via Meta-Learning},
+  author        = {Dao Duy Tung and Nguyen Quoc Chuong and Vu Tuan Hai and Le Bin Ho and Lan Nguyen Tran},
+  year          = {2026},
+  eprint        = {2604.19076},
+  archivePrefix = {arXiv},
+  primaryClass  = {quant-ph},
+  url           = {https://arxiv.org/abs/2604.19076}
+}
+​```
+
+Qmes is built on the **Qsun** quantum simulator; please also cite:
+
+​```bibtex
+@article{Nguyen_2022,
+  title    = {Qsun: an open-source platform towards practical quantum machine learning applications},
+  author   = {Nguyen, Quoc Chuong and Ho, Le Bin and Nguyen Tran, Lan and Nguyen, Hung Q},
+  journal  = {Machine Learning: Science and Technology},
+  volume   = {3},
+  number   = {1},
+  pages    = {015034},
+  year     = {2022},
+  month    = {mar},
+  publisher= {IOP Publishing},
+  doi      = {10.1088/2632-2153/ac5997},
+  url      = {https://doi.org/10.1088/2632-2153/ac5997}
+}
+​```
+
+> **Note:** the Qmes citation above is provisional. It will be updated with the final reference once the work is formally submitted/published.
+
