@@ -36,7 +36,7 @@ from Qmes.recommender.selection import DEFAULT_CLASSIFIERS, select_features_mi
 
 from diagnostic_top1_stratified import loo_per_dataset
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 META_PATH = ROOT / "results" / "meta_dataset_classification_single_avg_600samples.csv"
 PIVOT_PATH = ROOT / "results" / "pivot_mcc_classification_600samples.csv"
 
