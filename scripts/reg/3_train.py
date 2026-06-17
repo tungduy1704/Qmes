@@ -18,7 +18,7 @@ import warnings
 from sklearn.exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples_2nd.csv"
 PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
 OUT_PATH = ROOT / "results" / "recommender_reg_summary_600samples.csv"
