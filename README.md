@@ -68,7 +68,7 @@ All circuits except `unit` scale inputs to `[0, π]`. The pool is defined in `Qm
 - **Evaluator** (`RegressionEvaluator`): KernelRidge with a **precomputed quantum fidelity kernel**, 3-fold KFold CV, same `StandardScaler → PCA → MinMaxScaler` order. Primary metric: **R²** (also reports RMSE, MAE).
 - **Recommender**: pairwise One-vs-One.
 
-> Note: both task types use **quantum-kernel methods** as the Oracle, not variational circuits. A fixed-kernel Oracle is deterministic and isolates the contribution of the *encoding* (no trainable ansatz parameters to confound the signal).
+> Note: both task types use **quantum-kernel methods** as the evaluator, not variational circuits. A fixed-kernel evaluator is deterministic and isolates the contribution of the *encoding* (no trainable ansatz parameters to confound the signal).
 
 ---
 
@@ -187,3 +187,58 @@ pyproject.toml
 
 ## Theoretical grounding
 
+---
+
+## Authors
+
+- **Dao Duy Tung** ¹,² — *lead developer*
+- **Nguyen Quoc Chuong** ³ — *corresponding author*
+- **Vu Tuan Hai** ⁴,²
+- **Le Bin Ho** ⁵,⁶
+- **Lan Nguyen Tran** ¹,²
+
+¹ University of Science, Vietnam National University, Ho Chi Minh City, Vietnam<br>
+² Vietnam National University, Ho Chi Minh City, Vietnam<br>
+³ Institute of Fundamental and Applied Sciences, Duy Tan University, Ho Chi Minh City, Vietnam<br>
+⁴ University of Information Technology, Vietnam National University, Ho Chi Minh City, Vietnam<br>
+⁵ Graduate School of Engineering, Tohoku University, Sendai, Japan<br>
+⁶ Frontier Research Institute for Interdisciplinary Sciences, Tohoku University, Sendai, Japan
+
+The bundled **Qsun** simulator is the work of Nguyen Q. C., Ho L. B., Nguyen Tran L., and Nguyen H. Q. — please cite it separately (below).
+
+## Citation
+
+If you use Qmes in your research, please cite the accompanying paper:
+
+```bibtex
+@misc{tung2026automatedselectionquantumencoding,
+  title         = {Towards Automated Selection of Quantum Encoding Circuits via Meta-Learning},
+  author        = {Dao Duy Tung and Nguyen Quoc Chuong and Vu Tuan Hai and Le Bin Ho and Lan Nguyen Tran},
+  year          = {2026},
+  eprint        = {2604.19076},
+  archivePrefix = {arXiv},
+  primaryClass  = {quant-ph},
+  url           = {https://arxiv.org/abs/2604.19076}
+}
+```
+
+Qmes is built on the **Qsun** quantum simulator; please also cite:
+
+```bibtex
+@article{Nguyen_2022,
+  doi       = {10.1088/2632-2153/ac5997},
+  url       = {https://doi.org/10.1088/2632-2153/ac5997},
+  year      = {2022},
+  month     = {mar},
+  publisher = {IOP Publishing},
+  volume    = {3},
+  number    = {1},
+  pages     = {015034},
+  author    = {Nguyen, Quoc Chuong and Ho, Le Bin and Nguyen Tran, Lan and Nguyen, Hung Q},
+  title     = {Qsun: an open-source platform towards practical quantum machine learning applications},
+  journal   = {Machine Learning: Science and Technology},
+  abstract  = {Currently, quantum hardware is restrained by noises and qubit numbers. Thus, a quantum virtual machine (QVM) that simulates operations of a quantum computer on classical computers is a vital tool for developing and testing quantum algorithms before deploying them on real quantum computers. Various variational quantum algorithms (VQAs) have been proposed and tested on QVMs to surpass the limitations of quantum hardware. Our goal is to exploit further the VQAs towards practical applications of quantum machine learning (QML) using state-of-the-art quantum computers. In this paper, we first introduce a QVM named Qsun, whose operation is underlined by quantum state wavefunctions. The platform provides native tools supporting VQAs. Especially using the parameter-shift rule, we implement quantum differentiable programming essential for gradient-based optimization. We then report two tests representative of QML: quantum linear regression and quantum neural network.}
+}
+```
+
+> **Note:** the Qmes citation above is provisional. It will be updated with the final reference once the work is formally submitted/published.

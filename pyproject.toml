@@ -1,9 +1,19 @@
 [project]
-name = "qmes"
+name = "Qmes"
 version = "0.1.0"
 description = "Quantum Meta-learning for Encoding Selection — recommends quantum encoding circuits for tabular datasets without quantum evaluation at inference time."
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    { name = "Dao Duy Tung" },
+    { name = "Nguyen Quoc Chuong" },
+    { name = "Vu Tuan Hai" },
+    { name = "Le Bin Ho" },
+    { name = "Lan Nguyen Tran" },
+]
+maintainers = [
+    { name = "Dao Duy Tung", email = "daoduytung1704@gmail.com" },
+]
 dependencies = [
     "numpy>=1.21",
     "pandas>=1.3",
@@ -13,7 +23,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-scripts = ["scipy>=1.7"]  
+scripts = ["scipy>=1.7"]
 
 [build-system]
 requires = ["setuptools>=64"]
