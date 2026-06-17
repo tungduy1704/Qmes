@@ -26,6 +26,15 @@ class PairwiseRecommender:
         Which meta-feature columns to use. None = all.
     tied_threshold : float
         Two circuits are tied if |score_1 - score_2| <= threshold.
+    feature_names : list[str] or None
+        Full ordered list of meta-feature names this recommender expects
+        from the extractor (before feature_indices subsetting). Persisted
+        so inference can assert order alignment after load().
+    task_type : str or None
+        E.g. 'classification' or 'regression'. Persisted so inference can
+        assert the recommender matches the extractor/evaluator in use.
+    metric_name : str or None
+        E.g. 'MCC' or 'R2'. Stored for traceability only.
     """
 
     def __init__(
@@ -34,11 +43,15 @@ class PairwiseRecommender:
         feature_indices: list[int] | None = None,
         tied_threshold: float = 0.01,
         feature_names: list[str] | None = None,
+        task_type: str | None = None,
+        metric_name: str | None = None,
     ):
         self.classifier = classifier
         self.feature_indices = feature_indices
         self.tied_threshold = tied_threshold
         self.feature_names = feature_names
+        self.task_type = task_type
+        self.metric_name = metric_name
 
         # Set after fit()
         self.circuits_: list[str] = []
@@ -129,16 +142,20 @@ class PairwiseRecommender:
         }
 
     def save(self, path: str | Path) -> None:
-        """Save fitted recommender to directory."""
+        """Save fitted recommender to directory (writes recommender.pkl)."""
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
 
         artifact = {
-            "classifiers": self.classifiers_,
-            "circuits": self.circuits_,
-            "pairs": self.pairs_,
+            "format_version": 1,
+            "task_type": self.task_type,
+            "metric_name": self.metric_name,
+            "feature_names": self.feature_names,
             "feature_indices": self.feature_indices,
             "tied_threshold": self.tied_threshold,
+            "circuits": self.circuits_,
+            "pairs": self.pairs_,
+            "classifiers": self.classifiers_,
         }
         with open(path / "recommender.pkl", "wb") as f:
             pickle.dump(artifact, f)
@@ -146,7 +163,7 @@ class PairwiseRecommender:
 
     @classmethod
     def load(cls, path: str | Path) -> "PairwiseRecommender":
-        """Load fitted recommender from directory."""
+        """Load fitted recommender from directory (reads recommender.pkl)."""
         path = Path(path)
         with open(path / "recommender.pkl", "rb") as f:
             artifact = pickle.load(f)
@@ -155,6 +172,9 @@ class PairwiseRecommender:
             classifier=None,  # template not needed after loading
             feature_indices=artifact["feature_indices"],
             tied_threshold=artifact["tied_threshold"],
+            feature_names=artifact.get("feature_names"),
+            task_type=artifact.get("task_type"),
+            metric_name=artifact.get("metric_name"),
         )
         obj.classifiers_ = artifact["classifiers"]
         obj.circuits_ = artifact["circuits"]

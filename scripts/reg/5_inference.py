@@ -3,12 +3,11 @@
 End-to-end inference cho regression:
   1. Load hold-out datasets (data/reg/inference.py)
   2. Oracle: true R² cho 7 circuit / dataset → pivot_r2_inference (cache)
-  3. Load bundles (selection_and_save_reg.py)
+  3. Load bundles via PairwiseRecommender.load() (4_select_save.py)
   4. Extract meta-features → recommend → so với true tied set
 """
 
 import logging
-import pickle
 from pathlib import Path
 
 import numpy as np
@@ -17,17 +16,18 @@ import pandas as pd
 from Qmes.data.reg.inference import load_inference_reg_datasets
 from Qmes.evaluators.regression import RegressionEvaluator
 from Qmes.extractors.regression import RegressionExtractor
+from Qmes.recommender.pairwise import PairwiseRecommender
 from Qmes.circuits.registry import get_circuit_names
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("inference_reg")
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PIVOT_INF = ROOT / "results" / "pivot_r2_inference_600samples.csv"
 
 BUNDLES = {
-    "kNN_top10": ROOT / "artifacts_reg" / "kNN_top10_bundle.pkl",
-    "NaiveBayes_full":   ROOT / "artifacts_reg" / "NaiveBayes_full_bundle.pkl",
+    "kNN_top10": ROOT / "artifacts_reg" / "kNN_top10",
+    "NaiveBayes_full": ROOT / "artifacts_reg" / "NaiveBayes_full",
 }
 
 TIED_THRESHOLD = 0.01
@@ -80,21 +80,26 @@ def main():
     meta_vectors = {ds: extractor.extract(X, y) for ds, (X, y) in datasets.items()}
 
     # ── 3. Per bundle: recommend & evaluate ──────────────────────
-    for bname, bpath in BUNDLES.items():
-        if not bpath.exists():
-            logger.warning("Bundle chưa có: %s — bỏ qua", bpath)
+    for bname, bdir in BUNDLES.items():
+        if not (bdir / "recommender.pkl").exists():
+            logger.warning("Bundle doesnot exist: %s — ignore", bdir)
             continue
-        with open(bpath, "rb") as f:
-            bundle = pickle.load(f)
-        rec = bundle["recommender"]
+        rec = PairwiseRecommender.load(bdir)
+
+        if rec.task_type is not None and rec.task_type != extractor.task_type:
+            raise ValueError(
+                f"Task-type mismatch ({bname}):\n"
+                f"  recommender: {rec.task_type}\n"
+                f"  extractor  : {extractor.task_type}"
+            )
 
         print(f"\n{'=' * 60}\n{bname}\n{'=' * 60}")
         rows = []
         for ds in datasets:
             res = meta_vectors[ds]
 
-            full_order = bundle["full_feature_order"]
-            if list(res.feature_names) != list(full_order):
+            full_order = rec.feature_names
+            if full_order is not None and list(res.feature_names) != list(full_order):
                 raise ValueError(
                     f"Feature-order mismatch ({ds}):\n"
                     f"  extractor : {res.feature_names}\n"

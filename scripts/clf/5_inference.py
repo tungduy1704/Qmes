@@ -3,12 +3,11 @@
 End-to-end inference for classification:
   1. Load hold-out datasets (data/clf/inference.py)
   2. Oracle: true MCC for 7 circuits per dataset → pivot_mcc_inference.csv (cache)
-  3. Load 2 bundles (selection_and_save_clf.py`
+  3. Load 2 bundles via PairwiseRecommender.load() (4_select_save.py)
   4. Extract meta-features → recommend → compare against true tied set
 """
 
 import logging
-import pickle
 from pathlib import Path
 
 import numpy as np
@@ -17,17 +16,18 @@ import pandas as pd
 from Qmes.data.clf.inference import load_inference_classification
 from Qmes.evaluators.classification import ClassificationEvaluator
 from Qmes.extractors.classification import ClassificationExtractor
+from Qmes.recommender.pairwise import PairwiseRecommender
 from Qmes.circuits.registry import get_circuit_names
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("inference_clf")
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 ART_DIR = ROOT / "results"
 PIVOT_INF = ROOT / "results" / "pivot_mcc_inference_600samples.csv"
 BUNDLES = {
-    "kNN_top5": ROOT / "artifacts_clf" / "kNN_top5_bundle.pkl",
-    "kNN_top10": ROOT / "artifacts_clf" / "kNN_top10_bundle.pkl",
+    "kNN_top5": ROOT / "artifacts_clf" / "kNN_top5",
+    "kNN_top10": ROOT / "artifacts_clf" / "kNN_top10",
 }
 
 TIED_THRESHOLD = 0.01
@@ -80,18 +80,23 @@ def main():
         meta_vectors[ds] = extractor.extract(X, y)  
 
     # 3. Per bundle: recommend and evaluate against true tied set
-    for bname, bpath in BUNDLES.items():
-        with open(bpath, "rb") as f:
-            bundle = pickle.load(f)
-        rec = bundle["recommender"]
+    for bname, bdir in BUNDLES.items():
+        rec = PairwiseRecommender.load(bdir)
+
+        if rec.task_type is not None and rec.task_type != extractor.task_type:
+            raise ValueError(
+                f"Task-type mismatch ({bname}):\n"
+                f"  recommender: {rec.task_type}\n"
+                f"  extractor  : {extractor.task_type}"
+            )
 
         print(f"\n{'='*60}\n{bname}\n{'='*60}")
         rows = []
         for ds in datasets:
             res = meta_vectors[ds]
 
-            full_order = bundle["full_feature_order"]
-            if list(res.feature_names) != list(full_order):
+            full_order = rec.feature_names
+            if full_order is not None and list(res.feature_names) != list(full_order):
                 raise ValueError(
                     f"Feature-order mismatch ({ds}):\n"
                     f"  extractor: {res.feature_names}\n"

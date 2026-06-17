@@ -90,10 +90,19 @@ def recommend(
         X, y = preprocess_new_dataset(X, y, stratify=stratify)
 
     result = extractor.extract(X, y)
+
+    rec_task = getattr(recommender, "task_type", None)
+    if rec_task is not None and result.task_type is not None and rec_task != result.task_type:
+        raise ValueError(
+            f"Task-type mismatch between extractor and recommender:\n"
+            f"  extractor  : {result.task_type}\n"
+            f"  recommender: {rec_task}"
+        )
+
     expected = getattr(recommender, "feature_names", None)
     if expected is not None and list(result.feature_names) != list(expected):
         raise ValueError(
-            f"Feature-name mismatch giữa extractor và recommender:\n"
+            f"Feature-name mismatch between extractor and recommender:\n"
             f"  extractor : {result.feature_names}\n"
             f"  recommender: {expected}"
         )
@@ -121,6 +130,14 @@ def evaluate_recommendation(
     -------
     DataFrame with per-dataset results
     """
+    rec_task = getattr(recommender, "task_type", None)
+    if rec_task is not None and rec_task != evaluator.task_type:
+        raise ValueError(
+            f"Task-type mismatch between recommender and evaluator:\n"
+            f"  recommender: {rec_task}\n"
+            f"  evaluator  : {evaluator.task_type}"
+        )
+
     metric_key = f"mean_{evaluator.metric_name.lower()}"
     rows = []
 

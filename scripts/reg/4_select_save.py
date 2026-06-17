@@ -1,10 +1,10 @@
 """scripts/reg/4_selection_save.py
 
 Retrain 2 selected configs on the filtered (non-degenerate) dataset,
-save each model as a .pkl bundle.
+save each model via PairwiseRecommender.save() into its own subdirectory.
 """
+import json
 import logging
-import pickle
 from pathlib import Path
 
 import numpy as np
@@ -17,12 +17,14 @@ from Qmes.recommender.pairwise import PairwiseRecommender
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("select_and_save_reg")
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples_2nd.csv"
 PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
 SUMMARY_PATH = ROOT / "results" / "recommender_reg_summary_600samples.csv"
 ART_DIR = ROOT / "artifacts_reg"
 
+TASK_TYPE = "regression"
+METRIC_NAME = "R2"
 TIED_THRESHOLD = 0.01
 K_VALUES = [5, 8, 10]
 
@@ -34,7 +36,7 @@ CONFIGS = [
 def get_loo_metrics(summary: pd.DataFrame, clf_key: str, feat_label: str) -> dict:
     row = summary[(summary["Features"] == feat_label) & (summary["Classifier"] == clf_key)]
     if row.empty:
-        logger.warning("Không thấy LOO metrics cho %s/%s trong summary", clf_key, feat_label)
+        logger.warning("Cannot find LOO metrics for %s/%s in summary", clf_key, feat_label)
         return {}
     r = row.iloc[0]
     return {
@@ -86,6 +88,8 @@ def main():
             feature_indices=feat_idx,
             tied_threshold=TIED_THRESHOLD,
             feature_names=feature_names_all,
+            task_type=TASK_TYPE,
+            metric_name=METRIC_NAME,
         )
         rec.fit(X_all, pivot_f)
 
@@ -97,25 +101,21 @@ def main():
         )
         print(f"  sample[{datasets[0]}] top3: {sample_pred['top_k']}, true tied: {tied0}")
 
-        # ── Bundle ──────────────────────────────────────────────
-        bundle = {
-            "recommender": rec,
-            "full_feature_order": feature_names_all,   
-            "feature_indices": feat_idx,
+        out_dir = ART_DIR / cfg_name
+        rec.save(out_dir)
+
+        config_meta = {
+            "config_name": cfg_name,
+            "classifier": clf_key,
+            "feature_subset": feat_label,
+            "tied_threshold": TIED_THRESHOLD,
+            "n_train_datasets": len(datasets),
             "selected_feature_names": feat_names,
-            "config_meta": {
-                "config_name": cfg_name,
-                "classifier": clf_key,
-                "feature_subset": feat_label,
-                "tied_threshold": TIED_THRESHOLD,
-                "n_train_datasets": len(datasets),
-                "loo_metrics": loo_metrics,
-            },
+            "loo_metrics": loo_metrics,
         }
-        out = ART_DIR / f"{cfg_name}_bundle.pkl"
-        with open(out, "wb") as f:
-            pickle.dump(bundle, f)
-        print(f"  saved → {out}\n")
+        with open(out_dir / "config_meta.json", "w", encoding="utf-8") as f:
+            json.dump(config_meta, f, indent=2, ensure_ascii=False)
+        print(f"  saved → {out_dir}\n")
 
 
 if __name__ == "__main__":
