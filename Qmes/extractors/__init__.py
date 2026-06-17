@@ -1,4 +1,7 @@
-"""Task-specific meta-feature extraction."""
+"""Qmes/extractors/__init__.py
+
+Task-specific meta-feature extraction.
+"""
 from Qmes.extractors.base import BaseExtractor, ExtractionResult
 from Qmes.extractors.classification import ClassificationExtractor
 from Qmes.extractors.regression import RegressionExtractor
@@ -14,29 +17,28 @@ def get_extractor(task_type: str, **kwargs) -> BaseExtractor:
 
     Parameters
     ----------
-    task_type : one of 'classification', 'regression', 'timeseries',
-                'multilabel', 'clustering', 'anomaly'
-    **kwargs : passed to extractor constructor (e.g. k_min, k_max for clustering)
+    task_type : {'classification', 'regression'}
+    **kwargs : passed to extractor constructor
 
     Returns
     -------
     Concrete BaseExtractor instance
+
+    Notes
+    -----
+    Future work (not yet implemented): timeseries, multilabel, clustering,
+    anomaly detection. Calling get_extractor() with these task types will
+    raise ValueError until implemented.
     """
     key = task_type.lower().replace("-", "").replace("_", "")
-    # Normalize common aliases
-    aliases = {
-        "classification": "classification",
-        "regression": "regression",
-    }
-    normalized = aliases.get(key, key)
 
-    if normalized not in _REGISTRY:
+    if key not in _REGISTRY:
         available = ", ".join(sorted(_REGISTRY.keys()))
         raise ValueError(
             f"Unknown task type '{task_type}'. Available: {available}"
         )
 
-    return _REGISTRY[normalized](**kwargs)
+    return _REGISTRY[key](**kwargs)
 
 __all__ = [
     "BaseExtractor",
