@@ -1,0 +1,24 @@
+{
+  "config_name": "kNN_top10",
+  "classifier": "kNN",
+  "feature_subset": "top10",
+  "tied_threshold": 0.01,
+  "n_train_datasets": 86,
+  "selected_feature_names": [
+    "c1",
+    "c3",
+    "l1",
+    "l3",
+    "l2",
+    "c4",
+    "s4",
+    "c2",
+    "s2",
+    "s3"
+  ],
+  "loo_metrics": {
+    "Tied": 0.7558,
+    "Top3_Tied": 0.9651,
+    "Mean_Regret": 0.014982
+  }
+}

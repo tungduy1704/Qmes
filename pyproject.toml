@@ -31,3 +31,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["Qmes*"]
+
+[tool.setuptools.package-data]
+# Default pre-trained recommender bundles (D2): ship them so
+# pip install Qmes gives a working load_default_recommender() out of
+# the box, without requiring the user to run scripts/*/4_select_save.py
+# first.
+Qmes = ["_models/classification/*", "_models/regression/*"]

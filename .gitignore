@@ -7,9 +7,9 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# Data tải về / artifacts lớn
 data_source/
 *.pkl
+!Qmes/_models/**/*.pkl
 
 # IDE
 .vscode/
@@ -19,4 +19,3 @@ data/cache/
 scripts/check_*.py
 scripts/test_*.py
 scripts/test_*.ipynb
-

@@ -1,0 +1,19 @@
+{
+  "config_name": "kNN_top5",
+  "classifier": "kNN",
+  "feature_subset": "top5",
+  "tied_threshold": 0.01,
+  "n_train_datasets": 105,
+  "selected_feature_names": [
+    "n4",
+    "l3",
+    "f1v",
+    "l2",
+    "density"
+  ],
+  "loo_metrics": {
+    "Tied": 0.619,
+    "Top3_Tied": 0.9048,
+    "Mean_Regret": 0.018317
+  }
+}
