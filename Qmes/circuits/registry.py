@@ -1,6 +1,6 @@
 """Qmes/circuits/registry.py
 
-Circuit pool và kernel matrix computation.
+Circuit pool and kernel matrix computation.
 """
 
 from __future__ import annotations
@@ -34,7 +34,6 @@ def get_circuit_fn(name: str):
     return CIRCUIT_POOL[name]
 
 # ── Kernel matrix ────────────────────────────────────────────────────────────
-
 def compute_kernel_matrix(X1, X2, circuit_fn):
     states_1 = [circuit_fn(x) for x in X1]
     symmetric = X1 is X2
