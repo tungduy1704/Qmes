@@ -19,8 +19,7 @@ from Qmes.circuits.registry import (
     compute_kernel_matrix,
     get_circuit_fn,
 )
-from Qmes.evaluators.base import BaseEvaluator
-from Qmes.evaluators.classification import filter_degenerate_datasets  
+from Qmes.evaluators.base import BaseEvaluator, filter_degenerate_datasets 
 
 logger = logging.getLogger(__name__)
 

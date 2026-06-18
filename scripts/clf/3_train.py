@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.evaluators.classification import filter_degenerate_datasets
 from Qmes.recommender.selection import (
     DEFAULT_CLASSIFIERS,
@@ -23,7 +24,6 @@ META_PATH = ROOT / "results" / "meta_dataset_classification_single_avg_600sample
 PIVOT_PATH = ROOT / "results" / "pivot_mcc_classification_600samples.csv"
 OUT_PATH = ROOT / "results" / "recommender_clf_summary_600samples.csv"
 
-TIED_THRESHOLD = 0.01
 K_VALUES = [5, 10, 15, 20]
 
 SMOKE = False  # quick test: 2 classifiers × 1 subset; set to False for full run

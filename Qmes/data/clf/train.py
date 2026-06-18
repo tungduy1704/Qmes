@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 from sklearn.utils import resample
 
+from Qmes.config import MAX_SAMPLES
 from Qmes.data.preprocessing import encode_categoricals, impute_and_cast
 
 logger = logging.getLogger(__name__)

@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 from sklearn.base import clone
 
+from Qmes.config import TIED_THRESHOLD
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +43,7 @@ class PairwiseRecommender:
         self,
         classifier,
         feature_indices: list[int] | None = None,
-        tied_threshold: float = 0.01,
+        tied_threshold: float = TIED_THRESHOLD,
         feature_names: list[str] | None = None,
         task_type: str | None = None,
         metric_name: str | None = None,

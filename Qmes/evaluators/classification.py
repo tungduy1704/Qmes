@@ -16,7 +16,7 @@ from Qmes.circuits.registry import (
     compute_kernel_matrix,
     get_circuit_fn,
 )
-from Qmes.evaluators.base import BaseEvaluator
+from Qmes.evaluators.base import BaseEvaluator, filter_degenerate_datasets 
 
 class ClassificationEvaluator(BaseEvaluator):
 
@@ -106,32 +106,3 @@ class ClassificationEvaluator(BaseEvaluator):
             "mean_f1": np.mean(f1_scores),
             "std_f1": np.std(f1_scores),
         }
-
-
-def filter_degenerate_datasets(
-    pivot: "pd.DataFrame",
-    min_max_score: float = 0.1,
-    ceiling_threshold: float = 0.99,
-) -> tuple["pd.DataFrame", dict[str, str]]:
-    """Remove no-signal and ceiling datasets from pivot table.
-
-    Parameters
-    ----------
-    pivot : DataFrame, index=circuits, columns=datasets
-    min_max_score : drop if max score across circuits < this
-    ceiling_threshold : drop if min score across circuits >= this
-
-    Returns
-    -------
-    (clean_pivot, removed_dict)
-    """
-    removed = {}
-    for ds in pivot.columns:
-        col = pivot[ds]
-        if col.max() < min_max_score:
-            removed[ds] = f"no-signal (max={col.max():.4f})"
-        elif col.min() >= ceiling_threshold:
-            removed[ds] = f"ceiling (min={col.min():.4f})"
-
-    clean = pivot.drop(columns=list(removed.keys()))
-    return clean, removed

@@ -13,10 +13,9 @@ from Qmes.extractors.base import BaseExtractor
 from Qmes.recommender.pairwise import PairwiseRecommender
 from Qmes.evaluators.base import BaseEvaluator
 from Qmes.data.preprocessing import encode_categoricals, impute_and_cast
+from Qmes.config import MAX_SAMPLES, TIED_THRESHOLD
 
 logger = logging.getLogger(__name__)
-
-MAX_SAMPLES = 600
 
 def preprocess_new_dataset(
     X: np.ndarray | pd.DataFrame,
@@ -36,7 +35,7 @@ def preprocess_new_dataset(
     ----------
     X : feature matrix (DataFrame or ndarray)
     y : target vector
-    max_samples : cap sample count (default 300)
+    max_samples : cap sample count (default 600, see Qmes.config.MAX_SAMPLES)
 
     Returns
     -------
@@ -94,7 +93,7 @@ def recommend(
     rec_task = getattr(recommender, "task_type", None)
     if rec_task is not None and result.task_type is not None and rec_task != result.task_type:
         raise ValueError(
-            f"Task-type mismatch between extractor and recommender:\n"
+            f"Task-type mismatch giữa extractor và recommender:\n"
             f"  extractor  : {result.task_type}\n"
             f"  recommender: {rec_task}"
         )
@@ -102,7 +101,7 @@ def recommend(
     expected = getattr(recommender, "feature_names", None)
     if expected is not None and list(result.feature_names) != list(expected):
         raise ValueError(
-            f"Feature-name mismatch between extractor and recommender:\n"
+            f"Feature-name mismatch giữa extractor và recommender:\n"
             f"  extractor : {result.feature_names}\n"
             f"  recommender: {expected}"
         )
@@ -116,7 +115,7 @@ def evaluate_recommendation(
     recommender: PairwiseRecommender,
     evaluator: BaseEvaluator,
     top_k: int = 3,
-    tied_threshold: float = 0.01,
+    tied_threshold: float = TIED_THRESHOLD,
     preprocess: bool = True,
 ) -> pd.DataFrame:
     """Run full inference evaluation on multiple datasets.
@@ -133,7 +132,7 @@ def evaluate_recommendation(
     rec_task = getattr(recommender, "task_type", None)
     if rec_task is not None and rec_task != evaluator.task_type:
         raise ValueError(
-            f"Task-type mismatch between recommender and evaluator:\n"
+            f"Task-type mismatch giữa recommender và evaluator:\n"
             f"  recommender: {rec_task}\n"
             f"  evaluator  : {evaluator.task_type}"
         )
@@ -206,3 +205,4 @@ def evaluate_recommendation(
         )
 
     return df
+

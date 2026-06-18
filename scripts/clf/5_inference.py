@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.data.clf.inference import load_inference_classification
 from Qmes.evaluators.classification import ClassificationEvaluator
 from Qmes.extractors.classification import ClassificationExtractor
@@ -30,7 +31,6 @@ BUNDLES = {
     "kNN_top10": ROOT / "artifacts_clf" / "kNN_top10",
 }
 
-TIED_THRESHOLD = 0.01
 TOP_K = 3
 
 def build_inference_pivot(datasets, circuits):

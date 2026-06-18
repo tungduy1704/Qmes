@@ -31,6 +31,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import wilcoxon
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.evaluators.classification import filter_degenerate_datasets
 from Qmes.recommender.selection import DEFAULT_CLASSIFIERS, select_features_mi
 
@@ -40,7 +41,6 @@ ROOT = Path(__file__).resolve().parents[2]
 META_PATH = ROOT / "results" / "meta_dataset_classification_single_avg_600samples.csv"
 PIVOT_PATH = ROOT / "results" / "pivot_mcc_classification_600samples.csv"
 
-TIED_THRESHOLD = 0.01
 K_VALUES = [5, 10, 15, 20]
 CANDIDATES = [("kNN", "top5"), ("kNN", "top10")]
 

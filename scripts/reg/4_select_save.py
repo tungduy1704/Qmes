@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.evaluators.regression import filter_degenerate_datasets
 from Qmes.recommender.selection import DEFAULT_CLASSIFIERS, select_features_mi
 from Qmes.recommender.pairwise import PairwiseRecommender
@@ -25,7 +26,6 @@ ART_DIR = ROOT / "artifacts_reg"
 
 TASK_TYPE = "regression"
 METRIC_NAME = "R2"
-TIED_THRESHOLD = 0.01
 K_VALUES = [5, 8, 10]
 
 CONFIGS = [

@@ -8,11 +8,12 @@ import logging
 
 import numpy as np
 import pandas as pd
+from Qmes.config import MAX_SAMPLES
 from Qmes.data.preprocessing import encode_categoricals, impute_and_cast
 
 logger = logging.getLogger(__name__)
 
-N_SAMPLES = 600
+N_SAMPLES = MAX_SAMPLES
 RANDOM_STATE = 42
 
 # ── UCI: (id, signal) ────────────────────────────────────────────

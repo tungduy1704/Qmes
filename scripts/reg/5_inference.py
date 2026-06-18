@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.data.reg.inference import load_inference_reg_datasets
 from Qmes.evaluators.regression import RegressionEvaluator
 from Qmes.extractors.regression import RegressionExtractor
@@ -30,7 +31,6 @@ BUNDLES = {
     "NaiveBayes_full": ROOT / "artifacts_reg" / "NaiveBayes_full",
 }
 
-TIED_THRESHOLD = 0.01
 TOP_K = 3
 
 def build_inference_pivot(datasets, circuits):

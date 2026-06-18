@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.evaluators.classification import filter_degenerate_datasets
 from Qmes.recommender.selection import DEFAULT_CLASSIFIERS, select_features_mi
 from Qmes.recommender.pairwise import PairwiseRecommender
@@ -25,7 +26,6 @@ ART_DIR = ROOT / "artifacts_clf"
 
 TASK_TYPE = "classification"
 METRIC_NAME = "MCC"
-TIED_THRESHOLD = 0.01
 K_VALUES = [5, 10, 15, 20]
 
 # (config_name, classifier_key, feature_subset_label)

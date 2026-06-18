@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from Qmes.config import TIED_THRESHOLD
 from Qmes.evaluators.regression import filter_degenerate_datasets
 from Qmes.recommender.selection import (
     DEFAULT_CLASSIFIERS,
@@ -23,7 +24,6 @@ META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples_2n
 PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
 OUT_PATH = ROOT / "results" / "recommender_reg_summary_600samples.csv"
 
-TIED_THRESHOLD = 0.01
 K_VALUES = [5, 8, 10]
 SMOKE = False  # quick test: 2 classifiers × 1 subset; set to False for full run
 

@@ -21,6 +21,8 @@ from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 
+from Qmes.config import TIED_THRESHOLD
+
 
 # ── Classifier pool ──────────────────────────────────────────────────────────
 
@@ -78,7 +80,7 @@ def run_loo_evaluation(
     pivot_scores: pd.DataFrame,
     classifiers: dict | None = None,
     feature_subsets: dict[str, list[int]] | None = None,
-    tied_threshold: float = 0.01,
+    tied_threshold: float = TIED_THRESHOLD,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """Exhaustive LOO evaluation over (classifier × feature_subset).

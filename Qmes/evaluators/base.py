@@ -96,3 +96,36 @@ class BaseEvaluator(ABC):
         pivot = pd.DataFrame(records)  # index=circuits, columns=datasets
         pivot.index.name = "circuit"
         return pivot
+
+
+def filter_degenerate_datasets(
+    pivot: pd.DataFrame,
+    min_max_score: float = 0.1,
+    ceiling_threshold: float = 0.99,
+) -> tuple[pd.DataFrame, dict[str, str]]:
+    """Remove no-signal and ceiling datasets from a pivot table.
+
+    Task-agnostic: operates on any (circuit x dataset) score pivot
+    regardless of whether scores are MCC, R2, or another metric, so it
+    lives here rather than in a concrete task's evaluator module.
+
+    Parameters
+    ----------
+    pivot : DataFrame, index=circuits, columns=datasets
+    min_max_score : drop if max score across circuits < this
+    ceiling_threshold : drop if min score across circuits >= this
+
+    Returns
+    -------
+    (clean_pivot, removed_dict)
+    """
+    removed = {}
+    for ds in pivot.columns:
+        col = pivot[ds]
+        if col.max() < min_max_score:
+            removed[ds] = f"no-signal (max={col.max():.4f})"
+        elif col.min() >= ceiling_threshold:
+            removed[ds] = f"ceiling (min={col.min():.4f})"
+
+    clean = pivot.drop(columns=list(removed.keys()))
+    return clean, removed
