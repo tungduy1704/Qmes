@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from Qmes.config import TIED_THRESHOLD
-from Qmes.data.reg.inference import load_inference_reg_datasets
+from Qmes.data.reg.inference import load_inference_reg_datasets, _OPENML
 from Qmes.evaluators.regression import RegressionEvaluator
 from Qmes.extractors.regression import RegressionExtractor
 from Qmes.recommender.pairwise import PairwiseRecommender
@@ -52,7 +52,10 @@ def build_inference_pivot(datasets, circuits):
     return pivot
 
 def _source(name: str) -> str:
-    return "Synthetic" if any(k in name for k in ["quad", "sin", "friedman"]) else "OpenML"
+    # Look up the dataset registry directly instead of substring-matching
+    # the name (a previous version matched "sin" in "...Housing", silently
+    # mislabeling the real OpenML Housing dataset as Synthetic).
+    return "OpenML" if name in _OPENML else "Synthetic"
 
 def main():
     datasets = load_inference_reg_datasets()
@@ -82,7 +85,7 @@ def main():
     # ── 3. Per bundle: recommend & evaluate ──────────────────────
     for bname, bdir in BUNDLES.items():
         if not (bdir / "recommender.pkl").exists():
-            logger.warning("Bundle doesnot exist: %s — ignore", bdir)
+            logger.warning("Bundle chưa có: %s — bỏ qua", bdir)
             continue
         rec = PairwiseRecommender.load(bdir)
 
