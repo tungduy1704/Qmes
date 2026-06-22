@@ -189,6 +189,17 @@ pyproject.toml
 
 ---
 
+## License
+
+Qmes is released under the **MIT License** (see [`LICENSE`](LICENSE)).
+
+It bundles the **Qsun** quantum simulator in `Qmes/Qsun/`, which is a separate
+work under its own MIT License (© 2022 Quoc Chuong Nguyen, see
+[`Qmes/Qsun/LICENSE`](Qmes/Qsun/LICENSE) and [`NOTICE`](NOTICE)). If you use
+Qmes, please cite both Qmes and Qsun.
+
+---
+
 ## Authors
 
 - **Dao Duy Tung** ¹,² — *lead developer*
