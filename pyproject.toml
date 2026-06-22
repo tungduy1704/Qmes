@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Quantum Meta-learning for Encoding Selection — recommends quantum encoding circuits for tabular datasets without quantum evaluation at inference time."
 readme = "README.md"
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE", "Qmes/Qsun/LICENSE"]
 authors = [
     { name = "Dao Duy Tung" },
     { name = "Nguyen Quoc Chuong" },
@@ -37,4 +39,10 @@ include = ["Qmes*"]
 # pip install Qmes gives a working load_default_recommender() out of
 # the box, without requiring the user to run scripts/*/4_select_save.py
 # first.
-Qmes = ["_models/classification/*", "_models/regression/*"]
+# The bundled Qsun license is shipped alongside the code to satisfy the
+# MIT attribution requirement when the wheel is installed.
+Qmes = [
+    "_models/classification/*",
+    "_models/regression/*",
+    "Qsun/LICENSE",
+]
