@@ -1,0 +1,23 @@
+Qmes
+Copyright (c) 2026 Dao Duy Tung, Nguyen Quoc Chuong, Vu Tuan Hai,
+Le Bin Ho, Lan Nguyen Tran
+
+This product bundles the following third-party software:
+
+--------------------------------------------------------------------------------
+Qsun
+--------------------------------------------------------------------------------
+The directory Qmes/Qsun/ contains the Qsun quantum simulator, which is a
+separate work with its own copyright and license. It is redistributed here
+under the terms of the MIT License.
+
+    Copyright (c) 2022 Quoc Chuong Nguyen
+
+Qsun is described in:
+
+    Nguyen, Q. C., Ho, L. B., Nguyen Tran, L., & Nguyen, H. Q. (2022).
+    Qsun: an open-source platform towards practical quantum machine learning
+    applications. Machine Learning: Science and Technology, 3(1), 015034.
+    https://doi.org/10.1088/2632-2153/ac5997
+
+The full text of the Qsun license is reproduced in Qmes/Qsun/LICENSE.
