@@ -85,6 +85,60 @@ def recommend(
     preprocess: bool = True,
     stratify: bool = False,
 ) -> dict:
+    """Recommend quantum encoding circuits for a new dataset.
+
+    The end-to-end inference entry point: extracts meta-features from
+    (X, y), queries the pre-trained recommender, and returns a ranked
+    list of circuits — no quantum evaluation at inference time.
+
+    Parameters
+    ----------
+    X : array-like of shape (n_samples, n_features)
+        Feature matrix of the new dataset.
+    y : array-like of shape (n_samples,)
+        Target vector.
+    extractor : BaseExtractor
+        Fitted or stateless extractor matching the task type, e.g.
+        ``get_extractor('classification')``.
+    recommender : PairwiseRecommender
+        Pre-trained recommender, e.g. from ``load_default_recommender()``.
+        Must have the same task_type as *extractor*.
+    top_k : int, default=3
+        Number of top circuits to return.
+    preprocess : bool, default=True
+        If True, apply standard preprocessing (scaling, imputation)
+        before meta-feature extraction.
+    stratify : bool, default=False
+        If True, use stratified splitting during preprocessing.
+        Relevant for classification tasks with imbalanced classes.
+
+    Returns
+    -------
+    dict with keys:
+        'ranking' : list[str]
+            All 7 circuits sorted by votes (descending).
+        'top_k' : list[str]
+            Top-k circuits (first *top_k* elements of 'ranking').
+        'votes' : dict[str, int]
+            Raw OvO vote counts per circuit.
+        'meta_features' : np.ndarray of shape (d,)
+            Extracted meta-feature vector used for this recommendation.
+
+    Raises
+    ------
+    ValueError
+        If extractor.task_type != recommender.task_type.
+
+    Examples
+    --------
+    >>> from Qmes import get_extractor, load_default_recommender, recommend
+    >>> rec = load_default_recommender('classification')
+    >>> ext = get_extractor('classification')
+    >>> result = recommend(X, y, extractor=ext, recommender=rec)
+    >>> result['top_k']
+    ['RY', 'HERx', 'ZFM']
+    """
+    
     if preprocess:
         X, y = preprocess_new_dataset(X, y, stratify=stratify)
 

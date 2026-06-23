@@ -23,12 +23,6 @@ def get_extractor(task_type: str, **kwargs) -> BaseExtractor:
     Returns
     -------
     Concrete BaseExtractor instance
-
-    Notes
-    -----
-    Future work (not yet implemented): timeseries, multilabel, clustering,
-    anomaly detection. Calling get_extractor() with these task types will
-    raise ValueError until implemented.
     """
     key = task_type.lower().replace("-", "").replace("_", "")
 
