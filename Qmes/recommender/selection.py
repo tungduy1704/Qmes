@@ -82,22 +82,53 @@ def run_loo_evaluation(
     feature_subsets: dict[str, list[int]] | None = None,
     tied_threshold: float = TIED_THRESHOLD,
     verbose: bool = True,
+    dataset_names: list[str] | None = None,
 ) -> pd.DataFrame:
     """Exhaustive LOO evaluation over (classifier × feature_subset).
 
     Parameters
     ----------
     meta_features : (n_datasets, d)
+        Row i MUST correspond to ``pivot_scores.columns[i]``. Alignment is
+        positional: this function never joins by name (meta_features is a bare
+        array with no labels). Callers are responsible for passing meta rows in
+        pivot-column order, e.g. ``meta.loc[pivot.columns].values``.
     pivot_scores : index=circuits, columns=datasets
     classifiers : dict {name: sklearn_estimator}
     feature_subsets : dict {label: list_of_indices}
     tied_threshold : for tied-best evaluation
     verbose : print progress
+    dataset_names : list[str] or None
+        Optional alignment guard. If given, must be the dataset name for each
+        meta-feature row IN ROW ORDER; the function asserts it equals
+        ``list(pivot_scores.columns)`` and raises ValueError otherwise. Pass
+        ``list(meta.index)`` to turn the positional-alignment invariant from a
+        convention the caller must remember into a contract the library checks.
 
     Returns
     -------
     DataFrame with columns: Features, Classifier, Single, Tied, Top3_Tied, Mean_Regret
     """
+    # ── alignment guards ─────────────────────────────────────────────────
+    # Always-on shape check: catches the grossest misalignment (wrong number
+    # of meta rows) regardless of whether names are supplied.
+    if meta_features.shape[0] != pivot_scores.shape[1]:
+        raise ValueError(
+            f"meta_features has {meta_features.shape[0]} rows but pivot has "
+            f"{pivot_scores.shape[1]} datasets — they must match one-to-one."
+        )
+    # Opt-in name check: the real silent-corruption guard.
+    if dataset_names is not None and list(dataset_names) != list(pivot_scores.columns):
+        raise ValueError(
+            "Dataset alignment broken: meta-feature row order does not match "
+            "pivot column order. run_loo_evaluation pairs meta row i with "
+            "pivot column i BY POSITION, so a mismatch silently trains each "
+            "classifier on the wrong labels.\n"
+            f"  dataset_names[:3] = {list(dataset_names)[:3]}\n"
+            f"  pivot.columns[:3] = {list(pivot_scores.columns)[:3]}\n"
+            "Fix: pass meta reindexed to pivot order, e.g. meta.loc[pivot.columns]."
+        )
+
     if classifiers is None:
         classifiers = DEFAULT_CLASSIFIERS
     if feature_subsets is None:
