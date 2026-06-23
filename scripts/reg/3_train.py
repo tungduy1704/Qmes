@@ -91,6 +91,7 @@ def main():
         feature_subsets=feature_subsets,
         tied_threshold=TIED_THRESHOLD,
         verbose=True,
+        dataset_names=list(meta_f.index),  # alignment guard: meta rows ↔ pivot cols
     )
 
     # ── Summary ───────────────────────────────────────────────
