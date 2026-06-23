@@ -1,0 +1,36 @@
+site_name: Qmes
+site_url: https://tungduy1704.github.io/Qmes
+repo_url: https://github.com/tungduy1704/Qmes
+repo_name: tungduy1704/Qmes
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - API Reference: api/index.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            show_source: false
+            show_root_heading: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - admonition
