@@ -1,5 +1,7 @@
 # Qmes
 
+[![CI](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml/badge.svg)](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml)
+
 **Q**uantum **M**eta-learning for **E**ncoding **S**election — a meta-learning framework that recommends a suitable quantum encoding circuit for a given dataset **without running any quantum evaluation at inference time**.
 
 Given a new dataset `(X, y)` and a task type, Qmes extracts classical complexity meta-features and uses an offline-trained classical meta-learner to predict which encoding circuit (from a fixed pool) is most likely to perform best — collapsing what would otherwise be an expensive per-circuit quantum search into a single forward pass.
