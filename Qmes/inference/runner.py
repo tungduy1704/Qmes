@@ -26,16 +26,23 @@ def preprocess_new_dataset(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Preprocess a new dataset to match meta-dataset conventions.
 
-    Steps (same as data loaders):
+    Steps:
         1. Encode categoricals → numeric
         2. Impute missing values + cast to float64
-        3. Subsample to max_samples if needed
+        3. Subsample to max_samples (random by default; stratified if
+           stratify=True). The classification data loader stratifies by
+           default — pass stratify=True to mirror it.
 
     Parameters
     ----------
     X : feature matrix (DataFrame or ndarray)
     y : target vector
     max_samples : cap sample count (default 600, see Qmes.config.MAX_SAMPLES)
+    stratify : bool, default=False
+        Stratify the subsample on y. Only meaningful for classification;
+        leave False for regression (continuous target).
+    random_state : int, default=42
+        Seed for the subsampling RNG.
 
     Returns
     -------
@@ -98,7 +105,7 @@ def recommend(
     y : array-like of shape (n_samples,)
         Target vector.
     extractor : BaseExtractor
-        Fitted or stateless extractor matching the task type, e.g.
+        Stateless extractor matching the task type, e.g.
         ``get_extractor('classification')``.
     recommender : PairwiseRecommender
         Pre-trained recommender, e.g. from ``load_default_recommender()``.
@@ -106,10 +113,11 @@ def recommend(
     top_k : int, default=3
         Number of top circuits to return.
     preprocess : bool, default=True
-        If True, apply standard preprocessing (scaling, imputation)
-        before meta-feature extraction.
+        If True, run preprocess_new_dataset (encode categoricals, impute,
+        subsample) before extraction. Scaling is NOT done here — the
+        extractor handles its own scaling.
     stratify : bool, default=False
-        If True, use stratified splitting during preprocessing.
+        If True, use stratified subsampling during preprocessing.
         Relevant for classification tasks with imbalanced classes.
 
     Returns
@@ -127,15 +135,16 @@ def recommend(
     Raises
     ------
     ValueError
-        If extractor.task_type != recommender.task_type.
+        If extractor.task_type != recommender.task_type, or if the
+        extractor's feature names do not match the recommender's.
 
     Examples
     --------
     >>> from Qmes import get_extractor, load_default_recommender, recommend
     >>> rec = load_default_recommender('classification')
     >>> ext = get_extractor('classification')
-    >>> result = recommend(X, y, extractor=ext, recommender=rec)
-    >>> result['top_k']
+    >>> result = recommend(X, y, extractor=ext, recommender=rec)  # doctest: +SKIP
+    >>> result['top_k']  # doctest: +SKIP
     ['RY', 'HERx', 'ZFM']
     """
     
@@ -181,7 +190,17 @@ def evaluate_recommendation(
 
     Returns
     -------
-    DataFrame with per-dataset results
+    DataFrame, one row per dataset, columns:
+        dataset       : dataset name
+        rec_top1      : recommender's top-1 circuit
+        rec_top_k     : recommender's top-k circuits
+        true_best     : Oracle's best circuit (highest CV score)
+        true_top3     : Oracle's top-3 circuits
+        tied_hit      : True if rec_top1 is within tied_threshold of best
+        top3_tied_hit : True if any rec_top_k circuit is in the tied set
+        regret        : best_score - score of rec_top1 (lower is better)
+        best_score    : Oracle score of true_best
+        rec_score     : Oracle score of rec_top1
     """
     rec_task = getattr(recommender, "task_type", None)
     if rec_task is not None and rec_task != evaluator.task_type:
