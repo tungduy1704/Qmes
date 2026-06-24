@@ -36,7 +36,7 @@ class ExtractionResult:
     feature_names : list[str]
         Feature names, len == len(vector).
     task_type : str
-        Task type identifier (e.g. "classification", "timeseries").
+        Task type identifier (e.g. "classification", "regression").
     """
 
     vector: np.ndarray
@@ -96,7 +96,7 @@ class BaseExtractor(ABC):
         Parameters
         ----------
         X : feature matrix or time series matrix
-        y : target vector (None for unsupervised tasks like clustering)
+        y : target vector
 
         Returns
         -------
@@ -111,17 +111,13 @@ class BaseExtractor(ABC):
 
         Parameters
         ----------
-        X : ndarray
-            - Tabular: (n_samples, n_features)
-            - Time series: (n_samples, n_timesteps)
-        y : ndarray or None
-            - Classification/Regression/Anomaly: (n_samples,)
-            - Multi-label: (n_samples, n_labels)
-            - Clustering: None
+        X : ndarray, shape (n_samples, n_features)
+        y : ndarray, shape (n_samples,)
+            Target vector. Required for both classification and regression.
 
         Returns
         -------
-        ExtractionResult with sanitized vector + feature names
+        an ExtractionResult (vector + feature_names + task_type)
         """
         # ── Validate ────────────────────────────────────────────
         if X.ndim < 2:
@@ -193,7 +189,7 @@ class BaseExtractor(ABC):
             Index = dataset names, columns = feature names.
             Follows the meta-dataset format from the paper:
 
-            |                  | f1     | f1v    | ... | kolmogorov |
+            |                  | f1     | f1v    | ... | n4         |
             |------------------|--------|--------|-----|------------|
             | Blobs_F2C2_S100  | 0.0068 | 0.0020 | ... | 0.9861     |
             | Iris_S80         | 0.0254 | 0.0079 | ... | 0.3643     |
