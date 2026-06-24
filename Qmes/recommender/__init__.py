@@ -12,9 +12,9 @@ from Qmes.recommender.selection import (
     run_loo_evaluation,
 )
 
-# task_type -> default metric_name, kept in sync with Qmes.evaluators
-# (ClassificationEvaluator.metric_name, RegressionEvaluator.metric_name)
-# rather than hard-coded a second time.
+# task_type -> default metric_name. Manual duplicate of
+# ClassificationEvaluator.metric_name / RegressionEvaluator.metric_name —
+# keep in sync by hand if those change.
 _DEFAULT_METRIC_NAME = {
     "classification": "MCC",
     "regression": "R2",
@@ -41,7 +41,18 @@ def get_recommender(
     task_type : {'classification', 'regression'}
     classifier : sklearn estimator (unfitted template), still supplied by
         the caller -- there is no per-task default classifier.
-    metric_name : override the auto-filled default if needed.
+    feature_indices : list[int] or None, default=None
+        Which meta-feature columns the recommender uses. None = all.
+    tied_threshold : float, default=TIED_THRESHOLD
+        Tie tolerance for downstream evaluation; stored and persisted on
+        the recommender, not applied by predict() itself.
+    feature_names : list[str] or None, default=None
+        Full ordered meta-feature names expected from the extractor (before
+        feature_indices subsetting). Persisted so inference can assert order
+        alignment after load().
+    metric_name : str or None, default=None
+        Override the auto-filled default ('MCC' for classification, 'R2'
+        for regression) if needed.
 
     Returns
     -------
