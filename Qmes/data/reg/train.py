@@ -1,17 +1,18 @@
-"""Qmes/data/clf/train.py
+"""Qmes/data/reg/train.py
 
-Data loader for tabular binary classification datasets.
+Data loader for tabular regression datasets.
 Returns RAW (X, y) — scaling/normalization is NOT performed here.
 Extractor and Evaluator handle their own scaling as needed.
 
-Subsampling policy: each dataset is capped at MAX_SAMPLES=600 (stratified)
-at load time. Both Extractor and Evaluator receive pre-capped data —
-no additional subsampling is done downstream.
+Subsampling policy: each dataset is capped at MAX_SAMPLES=600 (random,
+unstratified — the target is continuous) at load time. Both Extractor and
+Evaluator receive pre-capped data — no additional subsampling is done
+downstream.
 
 Sources:
     - sklearn built-ins
     - UCI ML Repository (via ucimlrepo)
-    - CSV files 
+    - CSV files
     - Synthetic (sklearn.datasets generators)
 """
 from __future__ import annotations
