@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://tungduy1704.github.io/Qmes/quickstart/">
+        <link rel="canonical" href="https://tungduy1704.github.io/Qmes/meta_features/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../quickstart/">
       
       
-        <link rel="next" href="../meta_features/">
+        <link rel="next" href="../api/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Quick Start - Qmes</title>
+        <title>Meta-features - Qmes</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#quick-start" class="md-skip">
+        <a href="#meta-features" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Quick Start
+              Meta-features
             
           </span>
         </div>
@@ -286,6 +286,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -305,7 +332,7 @@
   <span class="md-ellipsis">
     
   
-    Quick Start
+    Meta-features
   
 
     
@@ -323,7 +350,7 @@
   <span class="md-ellipsis">
     
   
-    Quick Start
+    Meta-features
   
 
     
@@ -349,10 +376,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#classification-22-measures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Installation
+        Classification — 22 measures
       
     </span>
   </a>
@@ -360,43 +387,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#classification-example" class="md-nav__link">
+  <a href="#regression-12-measures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Classification example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#regression-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Regression example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#understanding-the-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Understanding the output
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#available-circuits" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Available circuits
+        Regression — 12 measures
       
     </span>
   </a>
@@ -407,33 +401,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../meta_features/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Meta-features
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -492,10 +459,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#classification-22-measures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Installation
+        Classification — 22 measures
       
     </span>
   </a>
@@ -503,43 +470,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#classification-example" class="md-nav__link">
+  <a href="#regression-12-measures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Classification example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#regression-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Regression example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#understanding-the-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Understanding the output
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#available-circuits" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Available circuits
+        Regression — 12 measures
       
     </span>
   </a>
@@ -566,80 +500,92 @@
   
 
 
-<h1 id="quick-start">Quick Start</h1>
-<h2 id="installation">Installation</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>Qmes
-</code></pre></div>
-<h2 id="classification-example">Classification example</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iris</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">Qmes</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_extractor</span><span class="p">,</span> <span class="n">load_default_recommender</span><span class="p">,</span> <span class="n">recommend</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Load your dataset</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Binary classification only: keep 2 classes</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">mask</span> <span class="o">=</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">2</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># Load pre-trained recommender (no quantum evaluation needed)</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">get_extractor</span><span class="p">(</span><span class="s2">&quot;classification&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="n">recommender</span> <span class="o">=</span> <span class="n">load_default_recommender</span><span class="p">(</span><span class="s2">&quot;classification&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># Get circuit recommendation</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">result</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">extractor</span><span class="o">=</span><span class="n">extractor</span><span class="p">,</span> <span class="n">recommender</span><span class="o">=</span><span class="n">recommender</span><span class="p">)</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Top circuits:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">])</span> <span class="c1"># [&#39;unit&#39;, &#39;RY&#39;, &#39;HERx&#39;]</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Full ranking:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;ranking&quot;</span><span class="p">])</span> <span class="c1">#  [&#39;unit&#39;, &#39;RY&#39;, &#39;HERx&#39;, &#39;SRx&#39;, &#39;RY_CX&#39;, &#39;HD&#39;, &#39;ZFM&#39;]</span>
-</code></pre></div>
-<h2 id="regression-example">Regression example</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_diabetes</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">Qmes</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_extractor</span><span class="p">,</span> <span class="n">load_default_recommender</span><span class="p">,</span> <span class="n">recommend</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_diabetes</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">get_extractor</span><span class="p">(</span><span class="s2">&quot;regression&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">recommender</span> <span class="o">=</span> <span class="n">load_default_recommender</span><span class="p">(</span><span class="s2">&quot;regression&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">result</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">extractor</span><span class="o">=</span><span class="n">extractor</span><span class="p">,</span> <span class="n">recommender</span><span class="o">=</span><span class="n">recommender</span><span class="p">)</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Top circuits:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">])</span> <span class="c1"># [&#39;RY&#39;, &#39;unit&#39;, &#39;HERx&#39;]</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Full ranking:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;ranking&quot;</span><span class="p">])</span> <span class="c1"># [&#39;RY&#39;, &#39;unit&#39;, &#39;HERx&#39;, &#39;HD&#39;, &#39;RY_CX&#39;, &#39;SRx&#39;, &#39;ZFM&#39;]</span>
-</code></pre></div>
-<h2 id="understanding-the-output">Understanding the output</h2>
+<h1 id="meta-features">Meta-features</h1>
+<p>Qmes describes each dataset with complexity measures computed by
+<a href="https://problexity.readthedocs.io/en/latest/">problexity</a>, an open-source
+library implementing the data-complexity measures of Lorena et al. Qmes does
+not define its own measures — it uses problexity's outputs directly as the
+meta-feature vector passed to the recommender.</p>
+<h2 id="classification-22-measures">Classification — 22 measures</h2>
 <table>
 <thead>
 <tr>
-<th>Key</th>
-<th>Type</th>
-<th>Description</th>
+<th>Category</th>
+<th>Measures</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ranking</code></td>
-<td><code>list[str]</code></td>
-<td>All 7 circuits sorted by OvO votes</td>
+<td><a href="https://problexity.readthedocs.io/en/latest/feature_based_api.html">Feature-based</a></td>
+<td>f1, f1v, f2, f3, f4</td>
 </tr>
 <tr>
-<td><code>top_k</code></td>
-<td><code>list[str]</code></td>
-<td>First <code>top_k</code> elements of <code>ranking</code> (default: 3)</td>
+<td><a href="https://problexity.readthedocs.io/en/latest/linearity_api.html">Linearity</a></td>
+<td>l1, l2, l3</td>
 </tr>
 <tr>
-<td><code>votes</code></td>
-<td><code>dict[str, int]</code></td>
-<td>Raw vote count per circuit</td>
+<td><a href="https://problexity.readthedocs.io/en/latest/neighborhood_api.html">Neighborhood</a></td>
+<td>n1, n2, n3, n4</td>
 </tr>
 <tr>
-<td><code>meta_features</code></td>
-<td><code>np.ndarray</code></td>
-<td>Complexity features extracted from your dataset</td>
+<td><a href="https://problexity.readthedocs.io/en/latest/network_api.html">Network</a></td>
+<td>t1, lsc, density, cls_coef, hubs</td>
+</tr>
+<tr>
+<td><a href="https://problexity.readthedocs.io/en/latest/dimensionality_api.html">Dimensionality</a></td>
+<td>t2, t3, t4</td>
+</tr>
+<tr>
+<td><a href="https://problexity.readthedocs.io/en/latest/class_imbalance_api.html">Class imbalance</a></td>
+<td>c1, c2</td>
 </tr>
 </tbody>
 </table>
-<h2 id="available-circuits">Available circuits</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">Qmes</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_circuit_names</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">get_circuit_names</span><span class="p">())</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># [&#39;unit&#39;, &#39;SRx&#39;, &#39;RY&#39;, &#39;HERx&#39;, &#39;RY_CX&#39;, &#39;ZFM&#39;, &#39;HD&#39;]</span>
+<h2 id="regression-12-measures">Regression — 12 measures</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://problexity.readthedocs.io/en/latest/correlation_api.html">Correlation</a></td>
+<td>c1, c2, c3, c4</td>
+</tr>
+<tr>
+<td><a href="https://problexity.readthedocs.io/en/latest/linearity_api.html">Linearity</a></td>
+<td>l1, l2, l3</td>
+</tr>
+<tr>
+<td><a href="https://problexity.readthedocs.io/en/latest/smoothness_api.html">Smoothness</a></td>
+<td>s1, s2, s3, s4</td>
+</tr>
+<tr>
+<td><a href="https://problexity.readthedocs.io/en/latest/dimensionality_api.html">Dimensionality</a></td>
+<td>t2</td>
+</tr>
+</tbody>
+</table>
+<p>See the <a href="https://problexity.readthedocs.io/en/latest/">problexity documentation</a>
+for the precise definition of each measure.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nc">@article</span><span class="p">{</span><span class="nl">komorniczak2023problexity</span><span class="p">,</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">title</span><span class="p">=</span><span class="s">{problexity—An open-source Python library for supervised learning problem complexity assessment}</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">author</span><span class="p">=</span><span class="s">{Komorniczak, Joanna and Ksieniewicz, Pawe{\l}}</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">journal</span><span class="p">=</span><span class="s">{Neurocomputing}</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">volume</span><span class="p">=</span><span class="s">{521}</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">pages</span><span class="p">=</span><span class="s">{126--136}</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="na">year</span><span class="p">=</span><span class="s">{2023}</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="na">publisher</span><span class="p">=</span><span class="s">{Elsevier}</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nc">@article</span><span class="p">{</span><span class="nl">lorena2018complex</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="na">title</span><span class="p">=</span><span class="s">{How complex is your classification problem}</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="na">author</span><span class="p">=</span><span class="s">{Lorena, A and Garcia, L and Lehmann, Jens and Souto, M and Ho, T}</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="na">journal</span><span class="p">=</span><span class="s">{A survey on measuring classification complexity. arXiv}</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="na">year</span><span class="p">=</span><span class="s">{2018}</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">}</span>
 </code></pre></div>
 
 
