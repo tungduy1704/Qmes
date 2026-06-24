@@ -53,7 +53,7 @@ def main():
         for ds in datasets
     }
     n = len(datasets)
-    print("=== Baselines (sau filter) ===")
+    print("=== Baselines (after filter) ===")
     print(f"Mean tie size: {np.mean([len(s) for s in tied_sets.values()]):.2f}")
     for c in pivot_f.index:
         tied_acc = sum(c in tied_sets[ds] for ds in datasets) / n

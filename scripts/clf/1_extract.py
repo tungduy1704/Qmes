@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore", message="More than 30% of hub", category=Runti
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("run_extractor_clf")
 
-OUT = Path(__file__).resolve().parents[1] / "results" / "meta_dataset_classification_single_avg_600samples.csv"
+OUT = Path(__file__).resolve().parents[2] / "results" / "meta_dataset_classification_single_avg_600samples.csv"
 
 def main():
     datasets = load_classification_datasets()
@@ -39,17 +39,17 @@ def main():
     df.index.name = "dataset"
 
     print("\n=== CHECKPOINT ===")
-    print(f"Shape: {df.shape}  (kỳ vọng ({len(datasets)-len(failed)}, 22))")        
+    print(f"Shape: {df.shape}  (expect ({len(datasets)-len(failed)}, 22))")        
     print(f"Failed: {failed if failed else 'none'}")
     nan_cols = df.columns[df.isna().any()].tolist()
     if nan_cols:
-        print(f"⚠ NaN ở cột: {nan_cols}")
+        print(f"Got NaN at column: {nan_cols}")
         print(df[df.isna().any(axis=1)].index.tolist())
     else:
         print("NaN: none")
     zero_rows = df.index[(df == 0).all(axis=1)].tolist()
     if zero_rows:
-        print(f"⚠ {len(zero_rows)} hàng TOÀN SỐ 0 (extraction fail bị nuốt): {zero_rows}")
+        print(f" {len(zero_rows)} all-zero row (extraction failures silently swallowed): {zero_rows}")
     else:
         print("Zero rows: none")
 

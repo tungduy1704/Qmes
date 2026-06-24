@@ -12,7 +12,7 @@ from Qmes.circuits.registry import get_circuit_names
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("run_oracle_reg")
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
 
 def main():
@@ -23,7 +23,7 @@ def main():
     if OUT.exists():
         pivot = pd.read_csv(OUT, index_col=0)
         done = set(pivot.columns)
-        logger.info("Resume: %d datasets đã xong", len(done))
+        logger.info("Resume: %d datasets done", len(done))
     else:
         OUT.parent.mkdir(parents=True, exist_ok=True)
         pivot = pd.DataFrame(index=circuits)
@@ -45,7 +45,7 @@ def main():
     print(f"NaN entries: {nan_count}")
     if nan_count:
         bad = pivot.columns[pivot.isna().any()].tolist()
-        print(f"  ⚠ Cột có NaN: {bad}")
+        print(f"Got NaN: {bad}")
 
     clean = pivot.dropna(axis=1, how="all")
     print("\n=== Circuit ranking (mean R² across datasets) ===")

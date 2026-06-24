@@ -12,7 +12,7 @@ from Qmes.circuits.registry import get_circuit_names
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("run_oracle_clf")
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "results" / "pivot_mcc_classification_600samples.csv"
 BACKUP = ROOT / "backup" / "pivot_mcc_classification.csv"
 
@@ -25,7 +25,7 @@ def main():
     if OUT.exists():
         pivot = pd.read_csv(OUT, index_col=0)
         done = set(pivot.columns)
-        logger.info("Resume: %d datasets đã xong", len(done))
+        logger.info("Resume: %d datasets done", len(done))
     else:
         pivot = pd.DataFrame(index=circuits)
         pivot.index.name = "circuit"
@@ -40,7 +40,7 @@ def main():
         pivot.to_csv(OUT)  
 
     print("\n=== CHECKPOINT ===")
-    print(f"Pivot shape: {pivot.shape}  (kỳ vọng (7, 108))")
+    print(f"Pivot shape: {pivot.shape}  (expect (7, 108))")
     nan_count = int(pivot.isna().sum().sum())
     print(f"NaN entries: {nan_count}")
 
@@ -50,15 +50,15 @@ def main():
         common = [n for n in uncapped if n in old.columns and n in pivot.columns]
         if common:
             diff = (pivot[common] - old.loc[pivot.index, common]).abs()
-            print(f"So sánh {len(common)} dataset không bị cap với backup:")
-            print(f"  max |ΔMCC| = {diff.max().max():.6f}  (kỳ vọng ≈ 0)")
+            print(f"Comparing {len(common)} non-capped datasets against backup:")
+            print(f"  max |ΔMCC| = {diff.max().max():.6f}  (expect ≈ 0)")
             bad = diff.columns[(diff > 6e-5).any()].tolist()
             if bad:
-                print(f"  ⚠ Lệch bất thường ở: {bad}")
+                print(f" Unexpected mismatch at: {bad}")
         else:
-            print("(Không có dataset chung để so — kiểm tra tên cột trong backup)")
+            print("(No shared datasets to compare — check column names in backup)")
     else:
-        print("(Không tìm thấy backup để so sánh)")
+        print("(No backup found to compare against)")
 
 
 if __name__ == "__main__":
