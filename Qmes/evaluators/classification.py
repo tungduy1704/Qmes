@@ -16,10 +16,10 @@ from Qmes.circuits.registry import (
     compute_kernel_matrix,
     get_circuit_fn,
 )
-from Qmes.evaluators.base import BaseEvaluator, filter_degenerate_datasets 
+from Qmes.evaluators.base import BaseEvaluator 
 
 class ClassificationEvaluator(BaseEvaluator):
-
+    """Evaluate encoding circuits for binary classification via quantum-kernel SVC."""
     task_type = "classification"
     metric_name = "MCC"
 
@@ -40,7 +40,7 @@ class ClassificationEvaluator(BaseEvaluator):
         circuit_name: str,
         **kwargs,
     ) -> dict[str, float]:
-        """3-fold stratified CV with SVC(precomputed kernel).
+        """Stratified K-fold CV (default n_splits=3) with SVC(precomputed kernel).
 
         Returns
         -------
