@@ -1,4 +1,10 @@
-"""Qmes/evaluators/base.py"""
+"""Qmes/evaluators/base.py
+
+Abstract base class for task-specific Oracles plus the task-agnostic
+degenerate-dataset filter. Concrete evaluators score every circuit on a
+dataset via cross-validated quantum-kernel methods (offline only).
+"""
+
 from __future__ import annotations
 
 import logging
