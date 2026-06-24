@@ -19,7 +19,7 @@ from Qmes.circuits.registry import (
     compute_kernel_matrix,
     get_circuit_fn,
 )
-from Qmes.evaluators.base import BaseEvaluator, filter_degenerate_datasets 
+from Qmes.evaluators.base import BaseEvaluator 
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class RegressionEvaluator(BaseEvaluator):
         circuit_name: str,
         **kwargs,
     ) -> dict[str, float]:
-        """3-fold KFold CV với KernelRidge(precomputed quantum kernel).
+        """K-fold CV (default n_splits=3) with KernelRidge(precomputed quantum kernel).
 
         Returns
         -------
