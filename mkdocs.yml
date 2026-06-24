@@ -8,16 +8,33 @@ theme:
   features:
     - navigation.sections
     - navigation.top
+    - navigation.tracking      
+    - toc.follow               
     - content.code.copy
+    - search.highlight
+    - search.suggest
   palette:
-    - scheme: default
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: indigo
       accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
 
 nav:
   - Home: index.md
   - Quick Start: quickstart.md
+  - Meta-features: meta_features.md
   - API Reference: api/index.md
+
 
 plugins:
   - search
@@ -28,6 +45,13 @@ plugins:
             docstring_style: numpy
             show_source: false
             show_root_heading: true
+            show_symbol_type_heading: true    
+            show_symbol_type_toc: true         
+            separate_signature: true           
+            signature_crossrefs: true          
+            docstring_section_style: table     
+            members_order: source
+            filters: ["!^_"]                 
 
 markdown_extensions:
   - pymdownx.highlight:
