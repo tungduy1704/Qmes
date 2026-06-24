@@ -958,7 +958,7 @@ list of circuits — no quantum evaluation at inference time.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Fitted or stateless extractor matching the task type, e.g.
+                <p>Stateless extractor matching the task type, e.g.
 <code>get_extractor('classification')</code>.</p>
               </div>
             </td>
@@ -1008,8 +1008,9 @@ Must have the same task_type as <em>extractor</em>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If True, apply standard preprocessing (scaling, imputation)
-before meta-feature extraction.</p>
+                <p>If True, run preprocess_new_dataset (encode categoricals, impute,
+subsample) before extraction. Scaling is NOT done here — the
+extractor handles its own scaling.</p>
               </div>
             </td>
             <td>
@@ -1025,7 +1026,7 @@ before meta-feature extraction.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If True, use stratified splitting during preprocessing.
+                <p>If True, use stratified subsampling during preprocessing.
 Relevant for classification tasks with imbalanced classes.</p>
               </div>
             </td>
@@ -1082,7 +1083,8 @@ Relevant for classification tasks with imbalanced classes.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If extractor.task_type != recommender.task_type.</p>
+                <p>If extractor.task_type != recommender.task_type, or if the
+extractor's feature names do not match the recommender's.</p>
               </div>
             </td>
           </tr>
@@ -1116,10 +1118,12 @@ Relevant for classification tasks with imbalanced classes.</p>
     <div class="doc doc-contents first">
 
         <p>Preprocess a new dataset to match meta-dataset conventions.</p>
-<p>Steps (same as data loaders):
+<p>Steps:
     1. Encode categoricals → numeric
     2. Impute missing values + cast to float64
-    3. Subsample to max_samples if needed</p>
+    3. Subsample to max_samples (random by default; stratified if
+       stratify=True). The classification data loader stratifies by
+       default — pass stratify=True to mirror it.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1179,6 +1183,39 @@ Relevant for classification tasks with imbalanced classes.</p>
             </td>
             <td>
                   <code><span title="Qmes.config.MAX_SAMPLES">MAX_SAMPLES</span></code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>stratify</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Stratify the subsample on y. Only meaningful for classification;
+leave False for regression (continuous target).</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>random_state</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Seed for the subsampling RNG.</p>
+              </div>
+            </td>
+            <td>
+                  <code>42</code>
             </td>
           </tr>
       </tbody>
@@ -1399,14 +1436,66 @@ be possible by hand and would only surface as a confusing label later.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>metric_name</code>
+                <code>feature_indices</code>
             </td>
             <td>
-                  <code>override the auto-filled default if needed.</code>
+                  <code><span title="list">list</span>[<span title="int">int</span>] or None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                
+                <p>Which meta-feature columns the recommender uses. None = all.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tied_threshold</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Tie tolerance for downstream evaluation; stored and persisted on
+the recommender, not applied by predict() itself.</p>
+              </div>
+            </td>
+            <td>
+                  <code>TIED_THRESHOLD</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>feature_names</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span>[<span title="str">str</span>] or None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Full ordered meta-feature names expected from the extractor (before
+feature_indices subsetting). Persisted so inference can assert order
+alignment after load().</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>metric_name</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> or None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Override the auto-filled default ('MCC' for classification, 'R2'
+for regression) if needed.</p>
               </div>
             </td>
             <td>
@@ -1514,7 +1603,8 @@ be possible by hand and would only surface as a confusing label later.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Two circuits are tied if |score_1 - score_2| &lt;= threshold.</p>
+                <p>Tie tolerance for downstream evaluation (run_loo_evaluation,
+evaluate_recommendation).</p>
               </div>
             </td>
             <td>
@@ -1630,7 +1720,9 @@ assert the recommender matches the extractor/evaluator in use.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Index must align with pivot_scores columns.</p>
+                <p>Row i must correspond to pivot_scores.columns[i]. Alignment is
+positional — if a DataFrame is passed, only its .values are used,
+not its index.</p>
               </div>
             </td>
             <td>
@@ -1972,13 +2064,6 @@ assert the recommender matches the extractor/evaluator in use.</p>
     </table>
 
 
-<details class="note" open>
-  <summary>Notes</summary>
-  <p>Future work (not yet implemented): timeseries, multilabel, clustering,
-anomaly detection. Calling get_evaluator() with these task types will
-raise ValueError until implemented.</p>
-</details>
-
     </div>
 
 </div><h2 id="research-utilities">Research utilities</h2>
@@ -2295,11 +2380,20 @@ lives here rather than in a concrete task's evaluator module.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code>DataFrame with per-dataset results</code>
+                  <code>DataFrame, one row per dataset, columns:</code>
             </td>
             <td>
               <div class="doc-md-description">
-                
+                <p>dataset       : dataset name
+rec_top1      : recommender's top-1 circuit
+rec_top_k     : recommender's top-k circuits
+true_best     : Oracle's best circuit (highest CV score)
+true_top3     : Oracle's top-3 circuits
+tied_hit      : True if rec_top1 is within tied_threshold of best
+top3_tied_hit : True if any rec_top_k circuit is in the tied set
+regret        : best_score - score of rec_top1 (lower is better)
+best_score    : Oracle score of true_best
+rec_score     : Oracle score of rec_top1</p>
               </div>
             </td>
           </tr>
