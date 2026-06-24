@@ -27,7 +27,8 @@ class PairwiseRecommender:
     feature_indices : list[int] or None
         Which meta-feature columns to use. None = all.
     tied_threshold : float
-        Two circuits are tied if |score_1 - score_2| <= threshold.
+        Tie tolerance for downstream evaluation (run_loo_evaluation,
+        evaluate_recommendation). 
     feature_names : list[str] or None
         Full ordered list of meta-feature names this recommender expects
         from the extractor (before feature_indices subsetting). Persisted
@@ -71,7 +72,9 @@ class PairwiseRecommender:
         Parameters
         ----------
         meta_features : (n_datasets, d) meta-feature matrix
-            Index must align with pivot_scores columns.
+            Row i must correspond to pivot_scores.columns[i]. Alignment is
+            positional — if a DataFrame is passed, only its .values are used,
+            not its index.
         pivot_scores : DataFrame, index=circuits, columns=datasets
             Values = primary metric (MCC, R², etc.)
         """
