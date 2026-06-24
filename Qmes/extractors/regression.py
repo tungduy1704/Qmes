@@ -48,8 +48,8 @@ def _compute_problexity_regression(
             keys = list(cc.report()["complexities"].keys())
             if keys != _PROBLEXITY_NAMES:
                 raise RuntimeError(
-                    f"problexity regression metric order đã đổi:\n  {keys}\n"
-                    f"!= {_PROBLEXITY_NAMES}\n  -> positional labeling sai"
+                    f"problexity regression metric order has changed:\n  {keys}\n"
+                    f"!= {_PROBLEXITY_NAMES}\n  -> positional labeling is no longer valid"
                 )
         runs.append(np.asarray(cc.complexity, dtype=np.float64))
 
