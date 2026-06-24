@@ -1,4 +1,4 @@
-"""Qmes/extractors/__intit__.py
+"""Qmes/evaluators/__intit__.py
 
 Task-specific Oracle evaluation (quantum kernel methods).
 """
@@ -22,12 +22,6 @@ def get_evaluator(task_type: str, **kwargs) -> BaseEvaluator:
     Returns
     -------
     Concrete BaseEvaluator instance
-
-    Notes
-    -----
-    Future work (not yet implemented): timeseries, multilabel, clustering,
-    anomaly detection. Calling get_evaluator() with these task types will
-    raise ValueError until implemented.
     """
     key = task_type.lower().replace("-", "").replace("_", "")
 
