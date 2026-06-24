@@ -18,7 +18,15 @@
 
 ::: Qmes.get_extractor
 
+::: Qmes.ClassificationExtractor
+
+::: Qmes.RegressionExtractor
+
 ::: Qmes.get_evaluator
+
+::: Qmes.ClassificationEvaluator
+
+::: Qmes.RegressionEvaluator
 
 ## Research utilities
 
