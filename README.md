@@ -12,7 +12,7 @@ Given a new dataset `(X, y)` and a task type, Qmes extracts classical complexity
 
 ## Idea in one paragraph
 
-Choosing a quantum feature map for a dataset normally means evaluating every candidate circuit on that dataset — expensive, and it has to be redone for each new dataset. Qmes treats this as an **algorithm-selection problem** (in the sense of Rice, 1976): build an offline meta-dataset by evaluating every circuit on many benchmark datasets, describe each dataset with cheap classical complexity metrics, and train a classical model to map *meta-features → suitable circuit*. At inference time only the cheap classical part runs.
+Choosing a quantum feature map for a dataset normally means evaluating every candidate circuit on that dataset — expensive, and it has to be redone for each new dataset. Qmes build an offline meta-dataset by evaluating every circuit on many benchmark datasets, describe each dataset with cheap classical complexity metrics, and train a classical model to map *meta-features → suitable circuit*. At inference time only the cheap classical part runs.
 
 ---
 
@@ -26,15 +26,7 @@ Three pluggable components, each an abstract base class with one concrete implem
 | **Evaluator** (Oracle) | `BaseEvaluator` | Score every circuit on a dataset to produce meta-labels (offline only) |
 | **Recommender** | `PairwiseRecommender` | Classical meta-learner: predict a circuit ranking from meta-features |
 
-```
-                       OFFLINE (build meta-dataset + train)
-   benchmark datasets ──► Extractor ──► meta-features ─┐
-                      └─► Evaluator ──► circuit scores ─┴─► Recommender.fit()
-                                                                 │
-                                                                 ▼
-                       INFERENCE (no quantum evaluation)   recommender.pkl
-   new (X, y) ──► Extractor ──► meta-features ──► Recommender.predict() ──► ranked circuits
-```
+![Qmes workflow](docs/assets/img/scheme.png)
 
 The split matters: the **Evaluator runs quantum kernel evaluations and is only used offline**. Inference touches the Extractor and Recommender only.
 
