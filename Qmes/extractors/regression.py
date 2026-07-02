@@ -61,7 +61,11 @@ def _compute_problexity_regression(
 
 
 class RegressionExtractor(BaseExtractor):
-    """Meta-feature extractor for tabular regression."""
+    """Meta-feature extractor for tabular regression.
+
+    Produces 12-dim vector:
+        [12 Lorena measures]    
+    """
 
     @property
     def task_type(self) -> str:
