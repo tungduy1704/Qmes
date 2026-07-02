@@ -19,27 +19,6 @@ logger = logging.getLogger(__name__)
 
 
 class PairwiseRecommender:
-    """Pairwise One-vs-One circuit recommender.
-
-    Parameters
-    ----------
-    classifier : sklearn estimator (unfitted template)
-    feature_indices : list[int] or None
-        Which meta-feature columns to use. None = all.
-    tied_threshold : float
-        Tie tolerance for downstream evaluation (run_loo_evaluation,
-        evaluate_recommendation). 
-    feature_names : list[str] or None
-        Full ordered list of meta-feature names this recommender expects
-        from the extractor (before feature_indices subsetting). Persisted
-        so inference can assert order alignment after load().
-    task_type : str or None
-        E.g. 'classification' or 'regression'. Persisted so inference can
-        assert the recommender matches the extractor/evaluator in use.
-    metric_name : str or None
-        E.g. 'MCC' or 'R2'. Stored for traceability only.
-    """
-
     def __init__(
         self,
         classifier,
@@ -49,6 +28,26 @@ class PairwiseRecommender:
         task_type: str | None = None,
         metric_name: str | None = None,
     ):
+        """Pairwise One-vs-One circuit recommender.
+
+        Parameters
+        ----------
+        classifier : sklearn estimator (unfitted template)
+        feature_indices : list[int] or None
+            Which meta-feature columns to use. None = all.
+        tied_threshold : float
+            Tie tolerance for downstream evaluation (run_loo_evaluation,
+            evaluate_recommendation). 
+        feature_names : list[str] or None
+            Full ordered list of meta-feature names this recommender expects
+            from the extractor (before feature_indices subsetting). Persisted
+            so inference can assert order alignment after load().
+        task_type : str or None
+            E.g. 'classification' or 'regression'. Persisted so inference can
+            assert the recommender matches the extractor/evaluator in use.
+        metric_name : str or None
+            E.g. 'MCC' or 'R2'. Stored for traceability only.
+        """    
         self.classifier = classifier
         self.feature_indices = feature_indices
         self.tied_threshold = tied_threshold
