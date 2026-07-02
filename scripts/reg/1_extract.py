@@ -1,4 +1,4 @@
-"""scripts/reg/1_extracts.py"""
+"""scripts/reg/1_extract.py"""
 
 import logging
 from pathlib import Path
@@ -10,13 +10,13 @@ from Qmes.data.reg.train import load_regression_datasets
 from Qmes.extractors.regression import RegressionExtractor
 
 import warnings
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore", message="More than 30% of hub", category=RuntimeWarning)
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("run_extractor_reg")
 
 OUT = Path(__file__).resolve().parents[2] / "results" / \
-    "meta_dataset_regression_single_avg_600samples_2nd.csv"
+    "meta_dataset_regression_single_avg_600samples.csv"
 
 def main():
     datasets = load_regression_datasets()
@@ -44,7 +44,7 @@ def main():
     print(f"Failed: {failed if failed else 'none'}")
     nan_cols = df.columns[df.isna().any()].tolist()
     if nan_cols:
-        print(f" NaN ở cột: {nan_cols}")
+        print(f" Got NaN at column: {nan_cols}")
         print(df[df.isna().any(axis=1)].index.tolist())
     else:
         print("NaN: none")

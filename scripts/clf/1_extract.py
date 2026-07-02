@@ -1,4 +1,4 @@
-"""scripts/clf/1_extracts.py"""
+"""scripts/clf/1_extract.py"""
 
 import logging
 from pathlib import Path
