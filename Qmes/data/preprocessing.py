@@ -26,7 +26,9 @@ def scale_features(X: np.ndarray, scaler=None):
         X_scaled = scaler.transform(X)
     return X_scaled, scaler
 
-# ── Time series preprocessing ───────────────────────────────────────────────
+# ── Time series preprocessing (unused — reserved for future task type,
+#    not part of the classification/regression scope described in the
+#    software paper. Not imported anywhere in Qmes/, scripts/, or tests/.) ──
 def impute_timeseries(X: np.ndarray, strategy: str = "zero") -> np.ndarray:
     """Impute NaN in time series 2D (n_samples, n_timesteps).
 
