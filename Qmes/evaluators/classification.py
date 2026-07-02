@@ -29,6 +29,21 @@ class ClassificationEvaluator(BaseEvaluator):
         max_features: int = 4,
         random_state: int = 42,
     ):
+        """Configure the classification Oracle.
+
+        Parameters
+        ----------
+        n_splits : int, default=3
+            Number of StratifiedKFold CV folds used to estimate circuit
+            performance.
+        max_features : int, default=4
+            Maximum number of PCA components (qubits) fed into the
+            quantum kernel. Capped at 4 to match the qubit budget of
+            the Qsun simulator; datasets with more raw features are
+            projected down via PCA fit on the train split only.
+        random_state : int, default=42
+            Seed for StratifiedKFold and PCA.
+        """    
         self.n_splits = n_splits
         self.max_features = max_features
         self.random_state = random_state
