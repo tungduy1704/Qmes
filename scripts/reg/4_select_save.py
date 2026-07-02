@@ -1,4 +1,4 @@
-"""scripts/reg/4_selection_save.py
+"""scripts/reg/4_select_save.py
 
 Retrain 2 selected configs on the filtered (non-degenerate) dataset,
 save each model via PairwiseRecommender.save() into its own subdirectory.
@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 from Qmes.config import TIED_THRESHOLD
-from Qmes.evaluators.regression import filter_degenerate_datasets
+from Qmes.evaluators import filter_degenerate_datasets
 from Qmes.recommender.selection import DEFAULT_CLASSIFIERS, select_features_mi
 from Qmes.recommender.pairwise import PairwiseRecommender
 
@@ -19,8 +19,8 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("select_and_save_reg")
 
 ROOT = Path(__file__).resolve().parents[2]
-META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples_2nd.csv"
-PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
+META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples.csv"
+PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples.csv"
 SUMMARY_PATH = ROOT / "results" / "recommender_reg_summary_600samples.csv"
 ART_DIR = ROOT / "artifacts_reg"
 
@@ -47,10 +47,6 @@ def get_loo_metrics(summary: pd.DataFrame, clf_key: str, feat_label: str) -> dic
 
 
 def main():
-    if not CONFIGS:
-        print("⚠ CONFIGS rỗng — điền config từ summary rồi chạy lại.")
-        return
-
     meta = pd.read_csv(META_PATH, index_col=0)
     pivot = pd.read_csv(PIVOT_PATH, index_col=0)
     summary = pd.read_csv(SUMMARY_PATH)

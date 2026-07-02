@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 from Qmes.config import TIED_THRESHOLD
-from Qmes.evaluators.classification import filter_degenerate_datasets
+from Qmes.evaluators import filter_degenerate_datasets
 from Qmes.recommender.selection import DEFAULT_CLASSIFIERS, select_features_mi
 from Qmes.recommender.pairwise import PairwiseRecommender
 
@@ -74,7 +74,7 @@ def main():
 
     for cfg_name, clf_key, feat_label in CONFIGS:
         feat_idx = subsets[feat_label]
-        feat_names = [feature_names_all[i] for i in feat_idx]   # subset thực sự dùng
+        feat_names = [feature_names_all[i] for i in feat_idx]
         loo_metrics = get_loo_metrics(summary, clf_key, feat_label)
 
         print(f"=== {cfg_name} ({clf_key}/{feat_label}, {len(feat_idx)} features) ===")
