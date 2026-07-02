@@ -37,9 +37,9 @@ def build_inference_pivot(datasets, circuits):
     if PIVOT_INF.exists():
         pivot = pd.read_csv(PIVOT_INF, index_col=0)
         if set(pivot.columns) == set(datasets) and set(pivot.index) == set(circuits):
-            logger.info("Đọc lại pivot inference đã cache: %s", pivot.shape)
+            logger.info("Loaded cached inference pivot: %s", pivot.shape)
             return pivot
-        logger.info("Cache không khớp dataset/circuit, tính lại")
+        logger.info("Cache mismatch on dataset/circuit set, recomputing")
 
     evaluator = ClassificationEvaluator(n_splits=3, max_features=4, random_state=42)
     pivot = pd.DataFrame(index=circuits)
