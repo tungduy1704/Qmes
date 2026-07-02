@@ -1345,11 +1345,11 @@ extractor's feature names do not match the recommender's.</p>
                 <code>X</code>
             </td>
             <td>
-                  <code>feature matrix (DataFrame or ndarray)</code>
+                  <code>(<span title="ndarray">ndarray</span> or <span title="pandas.DataFrame">DataFrame</span>, <span title="shape">shape</span>(<span title="n_samples">n_samples</span>, <span title="n_features">n_features</span>))</code>
             </td>
             <td>
               <div class="doc-md-description">
-                
+                <p>Feature matrix of the new dataset.</p>
               </div>
             </td>
             <td>
@@ -1361,11 +1361,11 @@ extractor's feature names do not match the recommender's.</p>
                 <code>y</code>
             </td>
             <td>
-                  <code>target vector</code>
+                  <code>(<span title="ndarray">ndarray</span> or <span title="pandas.Series">Series</span>, <span title="shape">shape</span>(<span title="n_samples">n_samples</span>))</code>
             </td>
             <td>
               <div class="doc-md-description">
-                
+                <p>Target vector.</p>
               </div>
             </td>
             <td>
@@ -1377,15 +1377,15 @@ extractor's feature names do not match the recommender's.</p>
                 <code>max_samples</code>
             </td>
             <td>
-                  <code>cap sample count (default 600, see Qmes.config.MAX_SAMPLES)</code>
+                  <code><span title="int">int</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                
+                <p>Cap on sample count after subsampling. See Qmes.config.MAX_SAMPLES.</p>
               </div>
             </td>
             <td>
-                  <code><span title="Qmes.config.MAX_SAMPLES">MAX_SAMPLES</span></code>
+                  <code>600</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1754,123 +1754,6 @@ for regression) if needed.</p>
     <div class="doc doc-contents first">
 
 
-
-        <p>Pairwise One-vs-One circuit recommender.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>classifier</code>
-            </td>
-            <td>
-                  <code>sklearn estimator (unfitted template)</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>feature_indices</code>
-            </td>
-            <td>
-                  <code><span title="list">list</span>[<span title="int">int</span>] or None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Which meta-feature columns to use. None = all.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>tied_threshold</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Tie tolerance for downstream evaluation (run_loo_evaluation,
-evaluate_recommendation).</p>
-              </div>
-            </td>
-            <td>
-                  <code><span title="Qmes.config.TIED_THRESHOLD">TIED_THRESHOLD</span></code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>feature_names</code>
-            </td>
-            <td>
-                  <code><span title="list">list</span>[<span title="str">str</span>] or None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Full ordered list of meta-feature names this recommender expects
-from the extractor (before feature_indices subsetting). Persisted
-so inference can assert order alignment after load().</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>task_type</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span> or None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>E.g. 'classification' or 'regression'. Persisted so inference can
-assert the recommender matches the extractor/evaluator in use.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>metric_name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span> or None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>E.g. 'MCC' or 'R2'. Stored for traceability only.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
 
 
 
@@ -2265,6 +2148,8 @@ not its index.</p>
 
 
         <p>Meta-feature extractor for tabular regression.</p>
+<p>Produces 12-dim vector:
+    [12 Lorena measures]</p>
 
 
 
@@ -2874,6 +2759,137 @@ lives here rather than in a concrete task's evaluator module.</p>
 3. Compare</p>
 
 
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>datasets</code>
+            </td>
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="tuple">tuple</span>[<span title="ndarray">ndarray</span>, <span title="ndarray">ndarray</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mapping of dataset name to (X, y). Each dataset is evaluated
+independently, out-of-sample — not the LOO in-sample evaluation
+of run_loo_evaluation.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>extractor</code>
+            </td>
+            <td>
+                  <code><span title="Qmes.extractors.base.BaseExtractor">BaseExtractor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Matching the task_type of recommender and evaluator.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>recommender</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            Qmes.PairwiseRecommender (Qmes.recommender.pairwise.PairwiseRecommender)" href="#Qmes.PairwiseRecommender">PairwiseRecommender</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Pre-trained recommender to evaluate.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>evaluator</code>
+            </td>
+            <td>
+                  <code><span title="Qmes.evaluators.base.BaseEvaluator">BaseEvaluator</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Oracle used to compute ground-truth circuit scores.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>top_k</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of top circuits requested from the recommender.</p>
+              </div>
+            </td>
+            <td>
+                  <code>3</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tied_threshold</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Absolute score delta defining the tied-best set for tied_hit /
+top3_tied_hit.</p>
+              </div>
+            </td>
+            <td>
+                  <code>TIED_THRESHOLD</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>preprocess</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, run preprocess_new_dataset on each dataset before both
+recommendation and Oracle evaluation.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
     <p><span class="doc-section-title">Returns:</span></p>
     <table>
       <thead>
@@ -2906,6 +2922,29 @@ rec_score     : Oracle score of rec_top1</p>
     </table>
 
 
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If recommender.task_type != evaluator.task_type.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
     </div>
 
 </div><h2 id="circuits">Circuits</h2>
@@ -2923,6 +2962,41 @@ rec_score     : Oracle score of rec_top1</p>
 </code></pre></div>
 
     <div class="doc doc-contents first">
+
+        <p>Return the names of all circuits in the pool.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="list">list</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Circuit names in the insertion order of <code>CIRCUIT_POOL</code>:</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code>``unit``, ``SRx``, ``RY``, ``HERx``, ``RY_CX``, ``ZFM``, ``HD``.</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
     </div>
