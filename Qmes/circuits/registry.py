@@ -23,6 +23,14 @@ CIRCUIT_POOL = {
 UNIT_RANGE_CIRCUITS = {"unit"}
 
 def get_circuit_names() -> list[str]:
+    """Return the names of all circuits in the pool.
+
+    Returns
+    -------
+    list[str]
+        Circuit names in the insertion order of ``CIRCUIT_POOL``:
+    ``unit``, ``SRx``, ``RY``, ``HERx``, ``RY_CX``, ``ZFM``, ``HD``.
+    """
     return list(CIRCUIT_POOL.keys())
 
 

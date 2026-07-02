@@ -1,4 +1,5 @@
 """Qmes/circuits/__init__.py
+
 Quantum encoding circuit pool and kernel computation.
 """
 from Qmes.circuits.registry import (
