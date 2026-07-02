@@ -19,7 +19,9 @@ Wilcoxon signed-rank on paired per-dataset regret vectors
 
 Reported candidate
 ------------------
-kNN_top10 — best config by LOO Mean_Regret (see recommender_clf_summary).
+kNN_top5 — selected by LOO Mean_Regret with a Top3_Tied (A3) tiebreak,
+not by Mean_Regret alone (kNN_top10 has lower regret but worse A3; see
+recommender_clf_summary and the paper's Model Selection section).
 
 Usage
 -----
@@ -46,7 +48,7 @@ PIVOT_PATH = ROOT / "results" / "pivot_mcc_classification_600samples.csv"
 
 # Best config selected by LOO Mean_Regret (recommender_clf_summary_600samples.csv)
 BEST_CLF    = KNeighborsClassifier()
-BEST_SUBSET = "top10"
+BEST_SUBSET = "top5"
 K_VALUES    = [5, 10, 15, 20]
 
 
@@ -177,7 +179,7 @@ def main():
     print(f"  Recommender Mean Regret  : {rec_mean:.4f}")
     print(f"  LOO best-average Regret  : {base_mean:.4f}")
     print(f"  Lift (base - rec)        : {base_mean - rec_mean:+.4f}")
-    print(f"  Wilcoxon p (paired)      : {p:.4f}")
+    print(f"  Wilcoxon p (paired)      : {p:.2e}")
     print(f"  Win / Loss / Tie         : "
           f"{int((diff>0).sum())} / {int((diff<0).sum())} / {int((diff==0).sum())}")
 
