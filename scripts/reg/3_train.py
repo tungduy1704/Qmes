@@ -4,9 +4,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from math import comb
 
 from Qmes.config import TIED_THRESHOLD
-from Qmes.evaluators.regression import filter_degenerate_datasets
+from Qmes.evaluators import filter_degenerate_datasets
 from Qmes.recommender.selection import (
     DEFAULT_CLASSIFIERS,
     select_features_mi,
@@ -20,11 +21,12 @@ from sklearn.exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 ROOT = Path(__file__).resolve().parents[2]
-META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples_2nd.csv"
-PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
+META_PATH = ROOT / "results" / "meta_dataset_regression_single_avg_600samples.csv"
+PIVOT_PATH = ROOT / "results" / "pivot_r2_regression_600samples.csv"
 OUT_PATH = ROOT / "results" / "recommender_reg_summary_600samples.csv"
 
 K_VALUES = [5, 8, 10]
+
 SMOKE = False  # quick test: 2 classifiers × 1 subset; set to False for full run
 
 def main():
@@ -58,7 +60,6 @@ def main():
     for c in pivot_f.index:
         tied_acc = sum(c in tied_sets[ds] for ds in datasets) / n
         print(f"  Always '{c}': Tied={tied_acc:.4f}")
-        from math import comb
         p_rand_top3 = np.mean([
             1 - comb(7 - len(tied_sets[ds]), 3) / comb(7, 3) if len(tied_sets[ds]) <= 4 else 1.0
             for ds in datasets
