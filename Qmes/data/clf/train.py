@@ -73,8 +73,6 @@ def load_cache() -> dict[str, tuple[np.ndarray, np.ndarray]] | None:
     logger.info("Loaded %d datasets from cache: %s", len(datasets), CACHE_DIR)
     return datasets
 
-MAX_SAMPLES = 600 
-
 # ── Dataset registries ───────────────────────────────────────────────────────
 _SKLEARN_DATASETS: dict[str, dict] = {
     "Iris_01":          {"loader": "load_iris",   "classes": [0, 1]},
