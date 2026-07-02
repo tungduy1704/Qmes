@@ -179,9 +179,14 @@ class BaseExtractor(ABC):
         Parameters
         ----------
         datasets : dict[name, data]
-            Output from data loader. Values can be:
-            - tuple (X, y) or (X, Y) — supervised tasks
-            - ndarray X — unsupervised tasks (clustering)
+            Output from data loader. Values are tuples ``(X, y)`` for
+            supervised tasks. A bare ``ndarray`` (no target) is accepted
+            by this method's signature as a forward-compatibility hook for
+            a future unsupervised extractor, but neither extractor
+            currently shipped (``ClassificationExtractor``,
+            ``RegressionExtractor``) supports it — both raise
+            ``ValueError`` if ``y`` is ``None``, so a bare-ndarray entry
+            is caught, logged, and skipped rather than silently succeeding.
 
         Returns
         -------
