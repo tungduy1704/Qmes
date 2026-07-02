@@ -497,7 +497,7 @@ def _load_uci(
             X_df = X_df.drop(columns=[target_col], errors="ignore")
         else:
             raise ValueError(
-                f"UCI {data_id}: target_col '{target_col}' không tìm thấy. "
+                f"UCI {data_id}: target_col '{target_col}' not found. "
                 f"original columns: {list(original_df.columns)}"
             )
     else:
@@ -505,7 +505,7 @@ def _load_uci(
         if targets_df is None:
             raise ValueError(
                 f"UCI {data_id}: repo.data.targets is None. "
-                "Chỉ định target_col để lấy target từ repo.data.original."
+                "Specify target_col to retrieve the target from repo.data.original."
             )
         y_series = targets_df.iloc[:, 0]
 
