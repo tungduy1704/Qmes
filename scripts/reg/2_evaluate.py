@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("run_oracle_reg")
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "results" / "pivot_r2_regression_600samples_2nd.csv"
+OUT = ROOT / "results" / "pivot_r2_regression_600samples.csv"
 
 def main():
     datasets = load_regression_datasets()
