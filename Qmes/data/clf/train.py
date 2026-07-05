@@ -424,7 +424,14 @@ def _load_uci(
     data_id: int,
     target_map: dict | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-    from ucimlrepo import fetch_ucirepo
+    
+    try:
+        from ucimlrepo import fetch_ucirepo
+    except ImportError as e:
+        raise ImportError(
+            "Loading UCI datasets requires the 'data' extra: "
+            "pip install Qmes[data]"
+        ) from e
 
     repo = fetch_ucirepo(id=data_id)
     X_df = repo.data.features.copy()

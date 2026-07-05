@@ -6,6 +6,12 @@
 pip install Qmes
 ```
 
+!!! note
+    Rebuilding the meta-dataset from UCI sources (the offline training
+    pipeline in `Qmes/data/`) requires the optional `data` extra:
+    `pip install Qmes[data]`. Inference and the default recommenders
+    do not need it.
+
 ## Classification example
 
 ```python

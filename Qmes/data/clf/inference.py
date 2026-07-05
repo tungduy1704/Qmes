@@ -85,7 +85,13 @@ def load_inference_classification(
     verbose: bool = True,
 ) -> tuple[dict[str, tuple[np.ndarray, np.ndarray]], dict[str, bool]]:
 
-    from ucimlrepo import fetch_ucirepo
+    try:
+        from ucimlrepo import fetch_ucirepo
+    except ImportError as e:
+        raise ImportError(
+            "Loading UCI datasets requires the 'data' extra: "
+            "pip install Qmes[data]"
+        ) from e
     from sklearn.datasets import fetch_openml
     from sklearn.preprocessing import LabelEncoder
 
