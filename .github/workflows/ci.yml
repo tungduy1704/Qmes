@@ -36,7 +36,7 @@ jobs:
           python-version: "3.10"
       - name: Install with minimum runtime pins
         run: pip install -e ".[test]" "numpy==1.21.*" "pandas==1.3.*" "scikit-learn==1.3.*"
-          pip install -e ".[test]"
+
       - name: Verify pins survived dependency resolution
         run: python -c "import numpy, pandas, sklearn; print(numpy.__version__, pandas.__version__, sklearn.__version__)"
       - name: Run tests
