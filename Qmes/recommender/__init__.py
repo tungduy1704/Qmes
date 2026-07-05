@@ -109,7 +109,7 @@ def load_default_recommender(task_type: str) -> PairwiseRecommender:
         )
 
     model_dir = importlib.resources.files("Qmes._models") / key
-    if not (model_dir / "recommender.pkl").is_file():
+    if not (model_dir / "recommender.json").is_file():
         raise FileNotFoundError(
             f"No bundled recommender for task_type='{key}' at {model_dir}. "
             f"This Qmes install is missing its packaged model data -- "

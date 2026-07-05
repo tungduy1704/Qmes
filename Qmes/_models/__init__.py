@@ -8,7 +8,9 @@ These exist so `pip install Qmes` gives a working
 running the offline train pipeline in scripts/.
 
 Layout: _models/<task_type>/
-    recommender.pkl   - pickled fitted PairwiseRecommender
+    recommender.npz   - training meta-feature matrix + pivot score values
+    recommender.json  - classifier spec + configuration (format v2;
+                        load() refits deterministically, no pickled sklearn)
     config_meta.json  - bundle provenance (config name, selected feature
                         names, LOO metrics) for reproducibility/inspection
 """

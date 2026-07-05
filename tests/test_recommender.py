@@ -10,7 +10,11 @@ Covers the contract that inference depends on:
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
+import pytest
+
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 from Qmes import get_recommender, PairwiseRecommender
 
@@ -98,3 +102,48 @@ def test_feature_indices_subset(synthetic_meta_pivot):
 
     assert rec.predict(np.array([0.0, 9.9, 9.9, 9.9]))["top_k"][0] == "A"
     assert rec.predict(np.array([1.0, 9.9, 9.9, 9.9]))["top_k"][0] == "B"
+
+def _tiny_fitted_recommender(classifier=None):
+    """Minimal fitted recommender for format-v2 bundle tests."""
+    rng = np.random.default_rng(0)
+    circuits = ["unit", "SRx", "RY", "HERx", "RY_CX", "ZFM", "HD"]
+    meta = rng.normal(size=(30, 12))
+    pivot = pd.DataFrame(
+        rng.uniform(size=(7, 30)),
+        index=circuits, columns=[f"ds{i}" for i in range(30)],
+    )
+    rec = PairwiseRecommender(
+        classifier or KNeighborsClassifier(),
+        feature_indices=[0, 2, 4],
+        task_type="regression", metric_name="R2",
+        feature_names=[f"f{i}" for i in range(12)],
+    ).fit(meta, pivot)
+    return rec, rng.normal(size=12)
+
+
+def test_save_writes_v2_bundle_and_roundtrip(tmp_path):
+    rec, x = _tiny_fitted_recommender()
+    rec.save(tmp_path)
+    # Format v2: data files only, no pickled sklearn objects
+    assert (tmp_path / "recommender.npz").is_file()
+    assert (tmp_path / "recommender.json").is_file()
+    assert not (tmp_path / "recommender.pkl").exists()
+    rec2 = PairwiseRecommender.load(tmp_path)
+    assert rec2.predict(x)["ranking"] == rec.predict(x)["ranking"]
+    assert rec2.predict(x)["votes"] == rec.predict(x)["votes"]
+
+
+def test_load_rejects_v1_pickle_bundle(tmp_path):
+    (tmp_path / "recommender.pkl").write_bytes(b"")
+    with pytest.raises(ValueError, match="format-v1"):
+        PairwiseRecommender.load(tmp_path)
+
+
+def test_save_rejects_non_json_serializable_classifier_params(tmp_path):
+    # A callable metric cannot be stored in the JSON classifier spec;
+    # save() must fail with TypeError, not write a half-broken bundle.
+    rec, _ = _tiny_fitted_recommender(
+        KNeighborsClassifier(metric=lambda a, b: float(np.sum(np.abs(a - b))))
+    )
+    with pytest.raises(TypeError):
+        rec.save(tmp_path)

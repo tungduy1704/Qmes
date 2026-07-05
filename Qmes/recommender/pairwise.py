@@ -5,7 +5,8 @@ Pairwise OvO recommender: trains one binary classifier per circuit pair, aggrega
 from __future__ import annotations
 
 import logging
-import pickle
+import importlib
+import json
 from itertools import combinations
 from pathlib import Path
 
@@ -56,6 +57,8 @@ class PairwiseRecommender:
         self.metric_name = metric_name
 
         # Set after fit()
+        self.train_meta_ = None
+        self.train_pivot_ = None
         self.circuits_: list[str] = []
         self.pairs_: list[tuple[str, str]] = []
         self.classifiers_: dict[tuple[str, str], object] = {}
@@ -80,6 +83,9 @@ class PairwiseRecommender:
         if isinstance(meta_features, pd.DataFrame):
             meta_features = meta_features.values
 
+        self.train_meta_ = meta_features
+        self.train_pivot_ = pivot_scores.copy()
+            
         X = self._select_features(meta_features)
         self.circuits_ = list(pivot_scores.index)
         self.pairs_ = list(combinations(self.circuits_, 2))
@@ -146,45 +152,113 @@ class PairwiseRecommender:
         }
 
     def save(self, path: str | Path) -> None:
-        """Save fitted recommender to directory (writes recommender.pkl)."""
+        """Save the recommender to a directory as a format-v2 bundle.
+
+        Writes two files: ``recommender.npz`` (training meta-feature
+        matrix and pivot score values) and ``recommender.json``
+        (classifier spec and configuration). Fitted estimators are NOT
+        persisted; load() refits from the stored training data instead,
+        so the bundle carries no pickled sklearn objects and stays
+        independent of the sklearn version that produced it.
+
+        Parameters
+        ----------
+        path : str or Path
+            Target directory. Created if it does not exist.
+
+        Raises
+        ------
+        RuntimeError
+            If called before fit().
+        TypeError
+            If the classifier's get_params() contains values that are
+            not JSON-serializable (e.g. estimator objects).
+        """
+        if not self.is_fitted_:
+            raise RuntimeError("Call fit() before save().")
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
 
-        artifact = {
-            "format_version": 1,
+        np.savez_compressed(
+            path / "recommender.npz",
+            train_meta=self.train_meta_,
+            pivot_values=self.train_pivot_.values,
+        )
+        spec = {
+            "class": f"{type(self.classifier).__module__}.{type(self.classifier).__qualname__}",
+            "params": self.classifier.get_params(),
+        }
+        meta = {
+            "format_version": 2,
             "task_type": self.task_type,
             "metric_name": self.metric_name,
             "feature_names": self.feature_names,
-            "feature_indices": self.feature_indices,
+            "feature_indices": (
+                None if self.feature_indices is None
+                else [int(i) for i in self.feature_indices]
+            ),
             "tied_threshold": self.tied_threshold,
-            "circuits": self.circuits_,
-            "pairs": self.pairs_,
-            "classifiers": self.classifiers_,
+            "circuits": list(self.train_pivot_.index),
+            "datasets": list(self.train_pivot_.columns),
+            "classifier_spec": spec,
         }
-        with open(path / "recommender.pkl", "wb") as f:
-            pickle.dump(artifact, f)
-        logger.info("Saved to %s", path)
+        with open(path / "recommender.json", "w") as f:
+            json.dump(meta, f, indent=2)
 
     @classmethod
     def load(cls, path: str | Path) -> "PairwiseRecommender":
-        """Load fitted recommender from directory (reads recommender.pkl)."""
-        path = Path(path)
-        with open(path / "recommender.pkl", "rb") as f:
-            artifact = pickle.load(f)
+        """Load a format-v2 bundle and refit from its stored training data.
 
-        obj = cls(
-            classifier=None,  # template not needed after loading
-            feature_indices=artifact["feature_indices"],
-            tied_threshold=artifact["tied_threshold"],
-            feature_names=artifact.get("feature_names"),
-            task_type=artifact.get("task_type"),
-            metric_name=artifact.get("metric_name"),
+        The classifier is reconstructed from the spec in
+        ``recommender.json`` and refit on the training matrices in
+        ``recommender.npz``. Refitting is cheap and deterministic for
+        the bundled kNN (no random state), and removes any coupling to
+        the sklearn version that created the bundle.
+
+        Parameters
+        ----------
+        path : str or Path
+            Directory containing ``recommender.npz`` and
+            ``recommender.json``.
+
+        Returns
+        -------
+        PairwiseRecommender
+            A fitted recommender equivalent to the one that was saved.
+
+        Raises
+        ------
+        ValueError
+            If the directory contains a legacy format-v1 pickle bundle.
+        FileNotFoundError
+            If the bundle files are missing.
+        """
+        path = Path(path)
+        if (path / "recommender.pkl").exists() and not (path / "recommender.json").exists():
+            raise ValueError(
+                f"{path} contains a format-v1 pickle bundle, which is no longer "
+                f"supported. Re-run the training pipeline and save() again."
+            )
+        with open(path / "recommender.json") as f:
+            meta = json.load(f)
+
+        module, _, name = meta["classifier_spec"]["class"].rpartition(".")
+        clf_cls = getattr(importlib.import_module(module), name)
+        classifier = clf_cls(**meta["classifier_spec"]["params"])
+
+        data = np.load(path / "recommender.npz")
+        pivot = pd.DataFrame(
+            data["pivot_values"], index=meta["circuits"], columns=meta["datasets"]
         )
-        obj.classifiers_ = artifact["classifiers"]
-        obj.circuits_ = artifact["circuits"]
-        obj.pairs_ = artifact["pairs"]
-        obj.is_fitted_ = True
-        return obj
+        obj = cls(
+            classifier=classifier,
+            feature_indices=meta["feature_indices"],
+            tied_threshold=meta["tied_threshold"],
+            feature_names=meta["feature_names"],
+            task_type=meta["task_type"],
+            metric_name=meta["metric_name"],
+        )
+        return obj.fit(data["train_meta"], pivot)
 
     def _select_features(self, X: np.ndarray) -> np.ndarray:
         if self.feature_indices is not None:

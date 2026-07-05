@@ -31,9 +31,8 @@ test = ["pytest>=7.0", "scipy>=1.7"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-# Keep real warnings visible (e.g. sklearn InconsistentVersionWarning from a
-# stale bundled .pkl); only the known-noisy problexity hub-score message is
-# downgraded so it doesn't drown the summary.
+# Keep real warnings visible only the known-noisy problexity hub-score
+# message is downgraded so it doesn't drown the summary.
 filterwarnings = [
     "ignore:.*hub or authority scores are zeros.*:RuntimeWarning",
 ]
