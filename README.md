@@ -4,6 +4,8 @@
 
 **Q**uantum **M**eta-learning for **E**ncoding **S**election — a meta-learning framework that recommends a suitable quantum encoding circuit for a given dataset **without running any quantum evaluation at inference time**.
 
+📖 **Documentation:** [tungduy1704.github.io/Qmes](https://tungduy1704.github.io/Qmes)
+
 Given a new dataset `(X, y)` and a task type, Qmes extracts classical complexity meta-features and uses an offline-trained classical meta-learner to predict which encoding circuit (from a fixed pool) is most likely to perform best — collapsing what would otherwise be an expensive per-circuit quantum search into a single forward pass.
 
 > **Status:** research code (v0.1.0). Classification and Regression pipelines are implemented end-to-end. Other task types are planned (see [Roadmap](#roadmap)).
@@ -68,10 +70,10 @@ All circuits except `unit` scale inputs to `[0, π]`. The pool is defined in `Qm
 
 ## The recommender (pairwise One-vs-One)
 
-`PairwiseRecommender` trains one binary classifier for each of the C(7,2) = 21 circuit pairs. Each classifier learns, from meta-features, which of two circuits scores higher. At prediction time the 21 votes are aggregated into a full ranking.
+`PairwiseRecommender` trains one binary comparator for each of the C(7,2) = 21 circuit pairs — each an independent clone of a base classifier (kNN in the shipped defaults). Each comparator learns, from meta-features, which of two circuits scores higher. At prediction time the 21 votes are aggregated into a full ranking.
 
 - **Tied threshold** (`0.01`): two circuits are treated as tied if their metric values are within this absolute delta — used so the Oracle's "best" set isn't artificially narrow.
-- **Model selection** (`recommender/selection.py`): exhaustive **Leave-One-Out** over (classifier × MI-selected feature subset). LOO accuracy on the meta-dataset is the validation signal — pairwise classifiers reaching training accuracy 1.0 is expected and not a sign of overfitting.
+- **Model selection** (`recommender/selection.py`): exhaustive **Leave-One-Out** over (classifier × MI-selected feature subset). LOO accuracy on the meta-dataset is the validation signal — pairwise comparators reaching training accuracy 1.0 is expected and not a sign of overfitting.
 
 ---
 
@@ -83,19 +85,37 @@ cd Qmes
 pip install -e .
 ```
 
-Requires **Python ≥ 3.10**.
-
-> **Dependencies are not yet declared in `pyproject.toml`.** Until that's fixed, install the runtime deps manually:
-> ```bash
-> pip install numpy pandas scikit-learn problexity ucimlrepo
-> ```
-> Qsun is bundled inside the package — no separate install needed.
+Requires **Python ≥ 3.10**. Runtime dependencies (`numpy`, `pandas`,
+`scikit-learn`, `problexity`) are declared in `pyproject.toml` and installed
+automatically; Qsun is bundled inside the package — no separate install
+needed. Rebuilding the meta-dataset from UCI sources additionally needs
+`pip install -e ".[data]"`.
 
 ---
 
 ## Quick start (inference)
 
-Plan to update soon!!!
+```python
+from sklearn.datasets import load_breast_cancer
+from Qmes import get_extractor, load_default_recommender, recommend
+
+X, y = load_breast_cancer(return_X_y=True)
+
+extractor = get_extractor("classification")
+recommender = load_default_recommender("classification")
+result = recommend(X, y, extractor=extractor, recommender=recommender)
+
+print("Top circuits:", result["top_k"])
+# Top circuits: ['unit', 'RY', 'HERx']
+print("Full ranking:", result["ranking"])
+# Full ranking: ['unit', 'RY', 'HERx', 'SRx', 'RY_CX', 'HD', 'ZFM']
+print("Vote counts:", result['votes'])
+# Vote counts: {'unit': 6, 'SRx': 3, 'RY': 5, 'HERx': 4, 'RY_CX': 2, 'ZFM': 0, 'HD': 1}
+```
+
+Regression is the identical call pattern with `"regression"` in both
+`get_extractor` and `load_default_recommender`. See the
+[Quick Start guide](https://tungduy1704.github.io/Qmes/quickstart/) for more.
 
 ---
 
@@ -118,7 +138,7 @@ Numbered scripts under `scripts/clf/` and `scripts/reg/` run the full offline wo
 
 ```
 Qmes/                          # installable package
-├── __init__.py                # sets __version__ only (no re-exports)
+├── __init__.py                # public API re-exports + __version__
 ├── Qsun/                      # bundled quantum simulator
 │   ├── Qencodes.py            
 │   ├── Qkernels.py          
@@ -176,10 +196,27 @@ pyproject.toml
 
 ## Roadmap
 
+The architecture supports these extensions without structural changes:
+
+- **Larger pool / meta-dataset** — a new circuit or benchmark dataset needs
+  only offline evaluation and a recommender refit.
+- **Variational oracle** — the `BaseEvaluator` contract admits an oracle
+  that trains circuit parameters instead of fixing them.
+- **Noise-aware scores** — scores from noisy simulation or real hardware
+  would let recommendations account for device error.
+- **Beyond supervised learning** — unsupervised tasks need a new source of
+  meta-features (current complexity measures presuppose a target variable).
 
 ---
 
 ## Theoretical grounding
+
+The framework, validation protocol, and benchmark results are described in
+the accompanying paper (see [Citation](#citation)): leave-one-out validation
+over 105 classification and 86 regression datasets, with mean regret reduced
+from 0.0366 to 0.0183 (classification) and 0.0626 to 0.0150 (regression)
+against a best-average baseline (Wilcoxon p < 10⁻⁴). Full details:
+[Validation](https://tungduy1704.github.io/Qmes/validation/).
 
 ---
 
