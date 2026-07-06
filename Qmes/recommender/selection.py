@@ -46,6 +46,14 @@ DEFAULT_CLASSIFIERS = {
     "NaiveBayes":  GaussianNB(),
     "LogReg":      LogisticRegression(max_iter=1000, random_state=42),
 }
+"""The 14-classifier pool searched by ``run_loo_evaluation``.
+
+Spans tree-based, ensemble, SVM, neural-network, instance-based, and
+probabilistic families so the model-selection grid covers diverse
+inductive biases. All stochastic members are seeded (``random_state=42``)
+for reproducible LOO results. The shipped default recommenders use kNN,
+selected from this pool by LOO mean regret.
+"""
 
 
 # ── Feature selection ────────────────────────────────────────────────────────

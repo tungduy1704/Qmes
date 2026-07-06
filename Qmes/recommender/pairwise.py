@@ -1,6 +1,6 @@
 """Qmes/recommender/pairwise.py
 
-Pairwise OvO recommender: trains one binary classifier per circuit pair, aggregates votes to rank circuits.
+Pairwise OvO recommender: trains one binary comparator per circuit pair, aggregates votes to rank circuits.
 """
 from __future__ import annotations
 
@@ -20,6 +20,37 @@ logger = logging.getLogger(__name__)
 
 
 class PairwiseRecommender:
+    """Pairwise one-vs-one (OvO) circuit recommender.
+
+    Trains one binary comparator per circuit pair (21 comparators for the
+    default 7-circuit pool), each an independent clone of the base
+    ``classifier``. Each comparator learns, from a dataset's
+    meta-features, which of its two circuits scores higher. At prediction
+    time every pair casts one vote and circuits are ranked by total
+    vote count.
+
+    A single class serves both classification and regression: behavior is
+    determined by the ``classifier`` template and the training data, not
+    by ``task_type`` (which is stored for validation against the extractor
+    at inference time).
+
+    Typical usage:
+
+    - ``load_default_recommender(task)`` — pre-trained bundle, ready to use.
+    - ``get_recommender(task, clf, ...)`` then ``fit()`` — retrain your own.
+
+    Attributes
+    ----------
+    circuits_ : list[str]
+        Circuit names, set after ``fit()`` (pivot index order).
+    pairs_ : list[tuple[str, str]]
+        All circuit pairs, set after ``fit()``.
+    classifiers_ : dict[tuple[str, str], object]
+        Fitted comparator (a clone of the base ``classifier``) per pair,
+        set after ``fit()``.
+    is_fitted_ : bool
+        True once ``fit()`` has run.
+    """
     def __init__(
         self,
         classifier,
@@ -69,7 +100,7 @@ class PairwiseRecommender:
         meta_features: np.ndarray | pd.DataFrame,
         pivot_scores: pd.DataFrame,
     ) -> "PairwiseRecommender":
-        """Train pairwise classifiers.
+        """Train one comparator per circuit pair.
 
         Parameters
         ----------
@@ -105,7 +136,7 @@ class PairwiseRecommender:
 
         self.is_fitted_ = True
         logger.info(
-            "Fitted %d pairwise classifiers for %d circuits",
+            "Fitted %d pairwise comparators for %d circuits",
             len(self.pairs_), len(self.circuits_),
         )
         return self

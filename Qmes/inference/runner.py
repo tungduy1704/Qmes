@@ -41,11 +41,11 @@ def preprocess_new_dataset(
         Target vector.
     max_samples : int, default=600
         Cap on sample count after subsampling. See Qmes.config.MAX_SAMPLES.
+    random_state : int, default=42
+        Seed for the subsampling RNG.
     stratify : bool, default=False
         Stratify the subsample on y. Only meaningful for classification;
         leave False for regression (continuous target).
-    random_state : int, default=42
-        Seed for the subsampling RNG.
 
     Returns
     -------
@@ -187,9 +187,11 @@ def evaluate_recommendation(
     """Run full inference evaluation on multiple datasets.
 
     For each dataset:
+
     1. Recommend circuits (no quantum eval)
     2. Run Oracle ground truth (quantum eval)
     3. Compare
+
     Parameters
     ----------
     datasets : dict[str, tuple[ndarray, ndarray]]
