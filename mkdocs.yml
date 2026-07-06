@@ -1,7 +1,18 @@
 site_name: Qmes
+site_description: >-
+  Quantum Meta-learning for Encoding Selection — recommends quantum encoding
+  circuits for tabular datasets without quantum evaluation at inference time.
 site_url: https://tungduy1704.github.io/Qmes
 repo_url: https://github.com/tungduy1704/Qmes
 repo_name: tungduy1704/Qmes
+edit_uri: edit/main/docs/
+
+strict: true
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
 
 theme:
   name: material
@@ -32,8 +43,20 @@ theme:
 nav:
   - Home: index.md
   - Quick Start: quickstart.md
-  - Meta-features: meta_features.md
-  - API Reference: api/index.md
+  - User Guide:
+      - Architecture: architecture.md
+      - Circuit Pool: circuit_pool.md
+      - Meta-features: meta_features.md
+      - Validation: validation.md
+  - Advanced Usage: advanced_usage.md
+  - API Reference:
+      - Overview: api/index.md
+      - Inference: api/inference.md
+      - Extractors: api/extractors.md
+      - Evaluators: api/evaluators.md
+      - Recommender: api/recommender.md
+      - Circuits: api/circuits.md
+  - Changelog: changelog.md
 
 
 plugins:
@@ -43,6 +66,9 @@ plugins:
         python:
           options:
             docstring_style: numpy
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
             show_source: false
             show_root_heading: true
             show_symbol_type_heading: true    
@@ -57,6 +83,8 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: true
   - admonition
   - pymdownx.arithmatex:
       generic: true

@@ -3,36 +3,41 @@
 ## Installation
 
 ```bash
-pip install Qmes
+pip install git+https://github.com/tungduy1704/Qmes.git
+```
+
+or, for a development install:
+
+```bash
+git clone https://github.com/tungduy1704/Qmes.git
+cd Qmes
+pip install -e .
 ```
 
 !!! note
     Rebuilding the meta-dataset from UCI sources (the offline training
     pipeline in `Qmes/data/`) requires the optional `data` extra:
-    `pip install Qmes[data]`. Inference and the default recommenders
+    `pip install -e ".[data]"`. Inference and the default recommenders
     do not need it.
 
 ## Classification example
 
 ```python
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_breast_cancer
 from Qmes import get_extractor, load_default_recommender, recommend
 
-# Load your dataset
-X, y = load_iris(return_X_y=True)
-# Binary classification only: keep 2 classes
-mask = y < 2
-X, y = X[mask], y[mask]
+X, y = load_breast_cancer(return_X_y=True)
 
-# Load pre-trained recommender (no quantum evaluation needed)
 extractor = get_extractor("classification")
 recommender = load_default_recommender("classification")
-
-# Get circuit recommendation
 result = recommend(X, y, extractor=extractor, recommender=recommender)
 
-print("Top circuits:", result["top_k"]) # ['unit', 'RY', 'HERx']
-print("Full ranking:", result["ranking"]) #  ['unit', 'RY', 'HERx', 'SRx', 'RY_CX', 'HD', 'ZFM']
+print("Top circuits:", result["top_k"])
+# Top circuits: ['unit', 'RY', 'HERx']
+print("Full ranking:", result["ranking"])
+# Full ranking: ['unit', 'RY', 'HERx', 'SRx', 'RY_CX', 'HD', 'ZFM']
+print("Vote counts:", result['votes'])
+# Vote counts: {'unit': 6, 'SRx': 3, 'RY': 5, 'HERx': 4, 'RY_CX': 2, 'ZFM': 0, 'HD': 1}
 ```
 
 ## Regression example
@@ -48,8 +53,12 @@ recommender = load_default_recommender("regression")
 
 result = recommend(X, y, extractor=extractor, recommender=recommender)
 
-print("Top circuits:", result["top_k"]) # ['RY', 'unit', 'HERx']
-print("Full ranking:", result["ranking"]) # ['RY', 'unit', 'HERx', 'HD', 'RY_CX', 'SRx', 'ZFM']
+print("Top circuits:", result["top_k"])
+# Top circuits: ['RY', 'unit', 'HERx']
+print("Full ranking:", result["ranking"])
+# Full ranking: ['RY', 'unit', 'HERx', 'HD', 'RY_CX', 'SRx', 'ZFM']
+print("Vote counts:", result['votes'])
+# Vote counts: {'unit': 5, 'SRx': 1, 'RY': 6, 'HERx': 4, 'RY_CX': 2, 'ZFM': 0, 'HD': 3}
 ```
 
 ## Understanding the output

@@ -2,7 +2,7 @@
 
 <p style="font-size: 1.3rem; font-weight: 500;">Quantum Meta-learning for Encoding Selection</p>
 
-Qmes recommends the most suitable quantum encoding circuit for a tabular dataset — without running quantum evaluation at inference time.
+Qmes recommends the most suitable quantum encoding circuit for a tabular dataset - without running quantum evaluation at inference time.
 
 [![CI](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml/badge.svg)](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://github.com/tungduy1704/Qmes)
@@ -11,7 +11,7 @@ Qmes recommends the most suitable quantum encoding circuit for a tabular dataset
 
 Selecting a quantum encoding circuit for a new dataset currently requires 
 exhaustive evaluation: running all candidate circuits on the dataset and 
-comparing their performance. This is expensive — evaluating a single circuit 
+comparing their performance. This is expensive - evaluating a single circuit 
 requires building an $n \times n$ kernel matrix via quantum state simulations, 
 and this must be repeated for every candidate.
 
@@ -19,25 +19,24 @@ and this must be repeated for every candidate.
 
 Qmes solves this with meta-learning:
 
-1. **Offline**: evaluate 7 candidate circuits on 105 classification datasets and 86 regression datasets, build a meta-dataset of (complexity features → best circuit)
-2. **Online**: for a new dataset, extract complexity features in seconds, query a pre-trained recommender, get a ranked circuit list — no quantum evaluation needed
+1. **Offline**: evaluate 7 candidate circuits on 105 classification datasets and 86 regression datasets, build a meta-dataset of (complexity measures → best circuit).
+2. **Online**: for a new dataset, extract complexity features in seconds, query a pre-trained recommender, get a ranked circuit list - no quantum evaluation needed.
 
 ## Quick example
 
 ```python
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_breast_cancer
 from Qmes import get_extractor, load_default_recommender, recommend
 
-X, y = load_iris(return_X_y=True)
-mask = y < 2
-X, y = X[mask], y[mask]
+X, y = load_breast_cancer(return_X_y=True)
 
 extractor = get_extractor("classification")
 recommender = load_default_recommender("classification")
-result = recommend(X, y, extractor=extractor, recommender=recommender)
+result = recommend(X, y, extractor=extractor, recommender=recommender, top_k=3)
 
-print(result["top_k"])    # ['unit', 'RY', 'HERx']
-print(result["ranking"])  # ['unit', 'RY', 'HERx', 'SRx', 'RY_CX', 'HD', 'ZFM']
+print(result["top_k"])    
+# ['unit', 'RY', 'HERx']
+
 ```
 
 ## Supported tasks
@@ -50,8 +49,12 @@ print(result["ranking"])  # ['unit', 'RY', 'HERx', 'SRx', 'RY_CX', 'HD', 'ZFM']
 ## Quick install
 
 ```bash
-pip install Qmes
+pip install git+https://github.com/tungduy1704/Qmes.git
 ```
+
+!!! note
+    A PyPI release (`pip install Qmes`) is planned alongside the paper
+    publication.
 
 ## 7 candidate circuits
 
