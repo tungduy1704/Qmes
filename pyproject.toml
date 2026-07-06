@@ -27,6 +27,7 @@ dependencies = [
 scripts = ["scipy>=1.7"]
 data = ["ucimlrepo>=0.0.3"]
 test = ["pytest>=7.0", "scipy>=1.7"]
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.24", "ruff"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

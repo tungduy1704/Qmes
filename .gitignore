@@ -15,6 +15,9 @@ data_source/
 .vscode/
 data/cache/
 
+# MkDocs build output
+site/
+
 # .gitignore
 scripts/check_*.py
 scripts/test_*.py
