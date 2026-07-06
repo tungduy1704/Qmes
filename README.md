@@ -1,6 +1,10 @@
-# Qmes
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tungduy1704/Qmes/main/docs/assets/logo_lockup.svg" width="240" alt="Qmes">
+</p>
 
-[![CI](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml/badge.svg)](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml)
+<p align="center">
+  <a href="https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml"><img src="https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
 
 **Q**uantum **M**eta-learning for **E**ncoding **S**election — a meta-learning framework that recommends a suitable quantum encoding circuit for a given dataset **without running any quantum evaluation at inference time**.
 
