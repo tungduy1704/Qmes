@@ -185,7 +185,7 @@ def main():
     print(f"  Recommender Mean Regret  : {rec_mean:.4f}")
     print(f"  LOO best-average Regret  : {base_mean:.4f}")
     print(f"  Lift (base - rec)        : {base_mean - rec_mean:+.4f}")
-    print(f"  Wilcoxon p (paired)      : {p:.4f}")
+    print(f"  Wilcoxon p (paired)      : {p:.2e}")
     print(f"  Win / Loss / Tie         : "
           f"{int((diff>0).sum())} / {int((diff<0).sum())} / {int((diff==0).sum())}")
 
