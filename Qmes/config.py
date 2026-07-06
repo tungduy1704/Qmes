@@ -17,7 +17,6 @@ convenience defaults:
   recommender/pairwise.py::PairwiseRecommender) -- a mismatch silently
   changes what "correct" means between train and test.
 
-Import these from here rather than redefining them locally.
 """
 
 MAX_SAMPLES = 600

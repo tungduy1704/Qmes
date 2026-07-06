@@ -1,4 +1,4 @@
-"""Qmes/evaluators/__intit__.py
+"""Qmes/evaluators/__init__.py
 
 Task-specific Oracle evaluation (quantum kernel methods).
 """
