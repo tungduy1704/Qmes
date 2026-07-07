@@ -1,0 +1,14 @@
+# Coverage configuration for the Qmes package.
+# Vendored simulator code (Qsun) and one-off data-generation scripts
+# are excluded: they are not part of the package's public API surface.
+[run]
+branch = True
+source = Qmes
+omit =
+    Qmes/Qsun/*
+    Qmes/data/*
+    Qmes/_models/*
+
+[report]
+show_missing = True
+precision = 1

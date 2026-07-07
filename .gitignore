@@ -22,3 +22,6 @@ site/
 scripts/check_*.py
 scripts/test_*.py
 scripts/test_*.ipynb
+# Coverage data
+.coverage
+htmlcov/

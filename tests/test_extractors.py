@@ -14,7 +14,30 @@ import numpy as np
 import pytest
 
 from Qmes import get_extractor, ClassificationExtractor, RegressionExtractor
-from Qmes.extractors.base import ExtractionResult
+from Qmes.extractors.base import BaseExtractor, ExtractionResult
+
+
+class _StubExtractor(BaseExtractor):
+    """Minimal extractor whose raw output is injected by the test.
+
+    Lets the sanitization layer of BaseExtractor.extract (padding,
+    truncation, non-finite replacement) be exercised directly, without
+    depending on any real meta-feature library misbehaving on cue.
+    """
+
+    def __init__(self, raw):
+        self._raw = raw
+
+    @property
+    def task_type(self) -> str:
+        return "stub"
+
+    @property
+    def _feature_names(self) -> list[str]:
+        return ["a", "b", "c"]
+
+    def _extract_raw(self, X, y=None):
+        return self._raw
 
 
 # ── factory ───────────────────────────────────────────────────────────────
@@ -116,3 +139,71 @@ def test_to_dict_roundtrip(tiny_reg):
     d = res.to_dict()
     assert set(d.keys()) == set(res.feature_names)
     assert len(d) == res.dim
+
+
+# ── input validation ──────────────────────────────────────────────────────
+def test_1d_X_rejected():
+    with pytest.raises(ValueError, match="2D"):
+        get_extractor("classification").extract(np.zeros(10), np.zeros(10))
+
+
+def test_single_sample_rejected():
+    with pytest.raises(ValueError, match="at least 2 samples"):
+        get_extractor("classification").extract(np.zeros((1, 4)), np.zeros(1))
+
+
+# ── sanitization layer (via stub extractor) ───────────────────────────────
+def test_short_raw_vector_is_zero_padded(tiny_clf):
+    X, y = tiny_clf
+    res = _StubExtractor(np.array([1.0, 2.0])).extract(X, y)  # 2 < 3
+    np.testing.assert_array_equal(res.vector, [1.0, 2.0, 0.0])
+    assert res.dim == 3
+
+
+def test_long_raw_vector_is_truncated(tiny_clf):
+    X, y = tiny_clf
+    res = _StubExtractor(np.arange(5.0)).extract(X, y)  # 5 > 3
+    np.testing.assert_array_equal(res.vector, [0.0, 1.0, 2.0])
+
+
+def test_non_finite_values_replaced_with_zero(tiny_clf):
+    X, y = tiny_clf
+    res = _StubExtractor(np.array([1.5, np.nan, np.inf])).extract(X, y)
+    np.testing.assert_array_equal(res.vector, [1.5, 0.0, 0.0])
+    assert np.all(np.isfinite(res.vector))
+
+
+def test_failing_extraction_propagates(tiny_clf):
+    class _Boom(_StubExtractor):
+        def _extract_raw(self, X, y=None):
+            raise RuntimeError("library exploded")
+
+    X, y = tiny_clf
+    with pytest.raises(RuntimeError, match="library exploded"):
+        _Boom(None).extract(X, y)
+
+
+# ── extract_batch ─────────────────────────────────────────────────────────
+def test_extract_batch_builds_meta_dataframe(tiny_clf):
+    """Happy path + skip path in one batch: good datasets become rows of
+    the meta-DataFrame; an entry the extractor rejects (bare ndarray, so
+    y=None) is skipped rather than aborting the whole batch."""
+    X, y = tiny_clf
+    ext = get_extractor("classification")
+    datasets = {
+        "good_a": (X, y),
+        "good_b": (X[:40], y[:40]),
+        "no_target": X,          # bare ndarray -> y=None -> rejected
+    }
+
+    df = ext.extract_batch(datasets)
+
+    assert list(df.index) == ["good_a", "good_b"]
+    assert df.index.name == "dataset"
+    assert list(df.columns) == list(ext._feature_names)
+    assert df.shape == (2, 22)
+    assert np.all(np.isfinite(df.values))
+    # rows must equal what single extraction produces
+    np.testing.assert_allclose(
+        df.loc["good_a"].values, ext.extract(X, y).vector, atol=1e-9
+    )
