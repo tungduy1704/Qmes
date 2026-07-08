@@ -66,10 +66,10 @@ systematic rather than driven by a few favorable datasets
 
 ### The shipped default recommenders
 
-Model selection searched 14 classifiers × MI-selected feature subsets by
-exhaustive LOO (see [Recommender](api/recommender.md)). The selected
-configurations, refit on the full meta-dataset and shipped in
-`Qmes/_models/`:
+Model selection searched [14 classifiers](#the-classifier-search-grid) ×
+MI-selected feature subsets by exhaustive LOO (see
+[Recommender](api/recommender.md)). The selected configurations, refit on
+the full meta-dataset and shipped in `Qmes/_models/`:
 
 | Task | Config | Meta-features used | LOO regret | Top-3 tied acc. |
 |---|---|---|---|---|
@@ -79,3 +79,28 @@ configurations, refit on the full meta-dataset and shipped in
 For classification, kNN top-10 achieved marginally lower regret (0.0165)
 but substantially lower top-3 tied accuracy (0.848 vs 0.905), so top-5 was
 selected. See [Meta-features](meta_features.md) for what each measure is.
+
+### The classifier search grid
+
+The 14 base classifiers searched during model selection, each paired with
+every MI-selected feature subset. All are
+[scikit-learn](https://scikit-learn.org/stable/supervised_learning.html)
+estimators at the parameters listed here; the winning configuration per
+task is in the table above.
+
+| Category | Classifier | Abbr. | Parameters |
+|---|---|---|---|
+| Tree-based | Decision Tree | DT | `max_depth=None` |
+| Tree-based | Random Forest | RF | `n_estimators=10` |
+| Ensemble | Gradient Boosting | E-GB | `n_estimators=100` |
+| Ensemble | AdaBoost | AB | `n_estimators=50` |
+| Ensemble | Bagging | Bg | `n_estimators=10` |
+| SVM | SVM-Linear | SVM-L | `kernel='linear'` |
+| SVM | SVM-RBF | SVM-R | `kernel='rbf'`, `C=1.0` |
+| SVM | SVM-Sigmoid | SVM-S | `kernel='sigmoid'` |
+| Neural network | MLP (500) | MLP-1 | `hidden=(500,)` |
+| Neural network | MLP (100-100-100) | MLP-3 | `hidden=(100,100,100)` |
+| Instance-based | k-NN | KNN | `n_neighbors=5` |
+| Instance-based | Nearest Centroid | NC | `metric='euclidean'` |
+| Probabilistic | Naive Bayes | NB | Gaussian |
+| Probabilistic | Logistic Regression | LR | `max_iter=1000` |
