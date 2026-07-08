@@ -79,7 +79,9 @@ def test_task_type_mismatch_is_caught(tiny_clf):
     X, y = tiny_clf
     clf_extractor = get_extractor("classification")
     reg_recommender = load_default_recommender("regression")
-    with pytest.raises(ValueError, match="[Mm]ismatch"):
+    # Match the exact guard: if the task-type check is disabled, the
+    # feature-name check downstream also says "mismatch" and would mask it.
+    with pytest.raises(ValueError, match="Task-type mismatch"):
         recommend(X, y, extractor=clf_extractor, recommender=reg_recommender)
 
 
@@ -166,6 +168,7 @@ def test_evaluate_recommendation_end_to_end(tiny_clf, circuit_names):
         assert row["rec_top1"] in circuit_names
         assert row["true_best"] in circuit_names
         assert row["rec_top1"] == row["rec_top_k"][0]
+        assert len(row["rec_top_k"]) == 3   # top_k=3 was requested
         assert len(row["true_top3"]) == 3
         # regret is best - recommended, so non-negative and consistent
         assert row["regret"] >= 0
@@ -178,11 +181,250 @@ def test_evaluate_recommendation_end_to_end(tiny_clf, circuit_names):
 
 
 def test_evaluate_recommendation_task_mismatch_raises(tiny_clf):
+    """Extractor and recommender agree (classification) and only the
+    evaluator is off — so evaluate_recommendation's own guard is the one
+    that must fire, before any quantum evaluation starts."""
     X, y = tiny_clf
-    with pytest.raises(ValueError, match="[Mm]ismatch"):
+    with pytest.raises(ValueError, match="Task-type mismatch"):
         evaluate_recommendation(
             {"d0": (X, y)},
             extractor=get_extractor("classification"),
-            recommender=load_default_recommender("regression"),
-            evaluator=get_evaluator("classification"),
+            recommender=load_default_recommender("classification"),
+            evaluator=get_evaluator("regression"),
         )
+
+
+# ── documented defaults of the public API ─────────────────────────────────
+def test_recommend_top_k_default_and_override(tiny_clf):
+    """top_k defaults to 3 and must honour an explicit override."""
+    X, y = tiny_clf
+    ext = get_extractor("classification")
+    rec = load_default_recommender("classification")
+
+    assert len(recommend(X, y, extractor=ext, recommender=rec)["top_k"]) == 3
+    assert len(recommend(X, y, extractor=ext, recommender=rec, top_k=5)["top_k"]) == 5
+
+
+def test_recommend_preprocesses_raw_pandas_by_default(tiny_clf):
+    """recommend() promises preprocess=True by default: a DataFrame with a
+    categorical column must be encoded, not passed raw to the extractor."""
+    rng = np.random.RandomState(0)
+    n = 60
+    X = pd.DataFrame({
+        "num1": rng.rand(n),
+        "num2": rng.rand(n),
+        "cat": rng.choice(["red", "green", "blue"], size=n),
+    })
+    y = pd.Series(rng.randint(0, 2, size=n).astype(float))
+
+    out = recommend(
+        X, y,
+        extractor=get_extractor("classification"),
+        recommender=load_default_recommender("classification"),
+    )
+    assert len(out["ranking"]) == 7
+
+
+# ── subsampling contract of preprocess_new_dataset ────────────────────────
+def test_preprocess_subsample_is_deterministic():
+    """Fixed random_state -> identical subsample on repeated calls, in both
+    the random and the stratified branch."""
+    rng = np.random.RandomState(0)
+    X = rng.rand(150, 3)
+    y = (rng.rand(150) > 0.5).astype(float)
+
+    for stratify in (False, True):
+        X1, y1 = preprocess_new_dataset(X, y, max_samples=100, stratify=stratify)
+        X2, y2 = preprocess_new_dataset(X, y, max_samples=100, stratify=stratify)
+        np.testing.assert_array_equal(X1, X2)
+        np.testing.assert_array_equal(y1, y2)
+
+
+def test_preprocess_subsamples_without_replacement():
+    """No row may be picked twice: with all-unique input rows, the
+    subsample must contain max_samples distinct rows."""
+    rng = np.random.RandomState(0)
+    X = rng.rand(150, 3)          # unique rows almost surely
+    y = rng.rand(150)
+
+    X_out, _ = preprocess_new_dataset(X, y, max_samples=100)
+    assert len(np.unique(X_out, axis=0)) == 100
+
+
+def test_preprocess_at_exact_cap_is_passthrough(tiny_clf):
+    """n == max_samples is NOT 'too large': data must pass through
+    untouched (no shuffling, no resampling)."""
+    X, y = tiny_clf   # n=60
+    X_out, y_out = preprocess_new_dataset(X, y, max_samples=60)
+    np.testing.assert_array_equal(X_out, X)
+    np.testing.assert_array_equal(y_out, y)
+
+
+# ── failure handling in evaluate_recommendation (stub Oracle) ─────────────
+class _StubEvaluator:
+    """Oracle stand-in returning a scripted score table per call.
+
+    Lets tests exercise evaluate_recommendation's failure handling
+    (all-NaN datasets) and scoring bookkeeping deterministically, without
+    quantum evaluation and without needing the real Oracle to fail.
+    """
+
+    task_type = "classification"
+    metric_name = "STUB"
+
+    def __init__(self, per_call_scores):
+        self._per_call = list(per_call_scores)
+        self._calls = 0
+
+    def evaluate_all(self, X, y):
+        scores = self._per_call[self._calls]
+        self._calls += 1
+        return {c: {"mean_stub": s} for c, s in scores.items()}
+
+
+def test_evaluate_recommendation_skips_failed_dataset(tiny_clf, circuit_names):
+    """A dataset where every circuit fails must be skipped — and must NOT
+    abort evaluation of the datasets after it."""
+    X, y = tiny_clf
+    all_nan = {c: np.nan for c in circuit_names}
+    good = {c: 0.5 for c in circuit_names}
+    good["RY"] = 0.9    # unique, clearly-best circuit
+    all_tied = {c: 0.7 for c in circuit_names}   # every circuit tied-best
+
+    df = evaluate_recommendation(
+        {"bad": (X, y), "good": (X[:40], y[:40]), "tied": (X[:50], y[:50])},
+        extractor=get_extractor("classification"),
+        recommender=load_default_recommender("classification"),
+        evaluator=_StubEvaluator([all_nan, good, all_tied]),
+    )
+
+    assert list(df["dataset"]) == ["good", "tied"]   # 'bad' skipped only
+    row = df.loc[df["dataset"] == "good"].iloc[0]
+    assert len(row["rec_top_k"]) == 3   # default top_k
+    assert row["true_best"] == "RY"
+    assert row["best_score"] == 0.9
+    # scores are scripted, so every derived field is checkable exactly
+    expected_rec_score = good[row["rec_top1"]]
+    assert row["rec_score"] == pytest.approx(expected_rec_score)
+    assert row["regret"] == pytest.approx(0.9 - expected_rec_score)
+    tied = {c for c, s in good.items() if s >= 0.9 - 0.01}   # == {"RY"}
+    assert row["tied_hit"] == (row["rec_top1"] in tied)
+    assert row["top3_tied_hit"] == any(c in tied for c in row["rec_top_k"])
+
+    # all circuits tied-best: any recommendation whatsoever is a tied hit
+    row = df.loc[df["dataset"] == "tied"].iloc[0]
+    assert row["regret"] == 0
+    assert row["tied_hit"]
+    assert row["top3_tied_hit"]
+
+
+def test_evaluate_recommendation_empty_input_returns_empty_df():
+    df = evaluate_recommendation(
+        {},
+        extractor=get_extractor("classification"),
+        recommender=load_default_recommender("classification"),
+        evaluator=_StubEvaluator([]),
+    )
+    assert len(df) == 0
+
+
+# ── tied-set boundary + argument propagation ──────────────────────────────
+def test_tied_set_includes_exact_boundary_score(tiny_clf, circuit_names):
+    """The tied-best set is defined by s >= best - tied_threshold: a circuit
+    landing EXACTLY on the boundary is tied. Scores are binary-exact
+    (0.75 - 0.25 == 0.5 in floating point) so the comparison really sits on
+    the boundary rather than a float hair to either side."""
+    X, y = tiny_clf
+    ext = get_extractor("classification")
+    rec = load_default_recommender("classification")
+
+    # The recommendation for a fixed dataset is deterministic - probe it,
+    # then script the oracle so the recommended circuit sits exactly on the
+    # boundary while a different circuit is strictly best.
+    rec_top1 = recommend(X, y, extractor=ext, recommender=rec)["top_k"][0]
+    best = next(c for c in circuit_names if c != rec_top1)
+    scores = {c: 0.1 for c in circuit_names}
+    scores[rec_top1] = 0.5          # == best - tied_threshold, exactly
+    scores[best] = 0.75
+
+    df = evaluate_recommendation(
+        {"d0": (X, y)},
+        extractor=ext, recommender=rec,
+        evaluator=_StubEvaluator([scores]),
+        tied_threshold=0.25,
+    )
+    row = df.iloc[0]
+    assert row["regret"] == pytest.approx(0.25)
+    assert row["tied_hit"], "boundary circuit must count as tied (>=, not >)"
+
+
+def test_evaluate_recommendation_propagates_top_k(tiny_clf, circuit_names):
+    """top_k must actually reach the recommender: with top_k=2 the row's
+    rec_top_k has exactly 2 entries. 2 != the default of 3, so a silently
+    dropped argument is visible."""
+    X, y = tiny_clf
+    good = {c: 0.5 for c in circuit_names}
+    good["RY"] = 0.9
+    df = evaluate_recommendation(
+        {"d0": (X, y)},
+        extractor=get_extractor("classification"),
+        recommender=load_default_recommender("classification"),
+        evaluator=_StubEvaluator([good]),
+        top_k=2,
+    )
+    assert len(df.iloc[0]["rec_top_k"]) == 2
+
+
+def test_evaluate_recommendation_preprocesses_by_default(circuit_names):
+    """preprocess=True is the documented default: raw pandas input with a
+    categorical column must be encoded before extraction, exactly as in
+    recommend()."""
+    rng = np.random.RandomState(0)
+    n = 60
+    X = pd.DataFrame({
+        "num1": rng.rand(n),
+        "num2": rng.rand(n),
+        "cat": rng.choice(["red", "green", "blue"], size=n),
+    })
+    y = pd.Series(rng.randint(0, 2, size=n).astype(float))
+    good = {c: 0.5 for c in circuit_names}
+    good["RY"] = 0.9
+
+    df = evaluate_recommendation(
+        {"raw": (X, y)},
+        extractor=get_extractor("classification"),
+        recommender=load_default_recommender("classification"),
+        evaluator=_StubEvaluator([good]),
+    )
+    assert list(df["dataset"]) == ["raw"]
+
+
+def test_recommended_circuit_with_missing_metric_gives_nan_regret(
+    tiny_clf, circuit_names
+):
+    """If the oracle returns no usable score for the recommended circuit,
+    that circuit is dropped from the valid set and the row must report NaN
+    regret/rec_score - not crash, and not fabricate a number - with
+    tied_hit False."""
+    X, y = tiny_clf
+    ext = get_extractor("classification")
+    rec = load_default_recommender("classification")
+    rec_top1 = recommend(X, y, extractor=ext, recommender=rec)["top_k"][0]
+
+    best = next(c for c in circuit_names if c != rec_top1)
+    scores = {c: {"mean_stub": 0.5} for c in circuit_names}
+    scores[best] = {"mean_stub": 0.9}
+    scores[rec_top1] = {}            # metric key absent -> treated as failed
+
+    class _RawStub(_StubEvaluator):
+        def evaluate_all(self, X, y):
+            return scores
+
+    df = evaluate_recommendation(
+        {"d0": (X, y)},
+        extractor=ext, recommender=rec, evaluator=_RawStub([]),
+    )
+    row = df.iloc[0]
+    assert np.isnan(row["regret"]) and np.isnan(row["rec_score"])
+    assert not row["tied_hit"]
+    assert row["best_score"] == pytest.approx(0.9)

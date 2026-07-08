@@ -26,7 +26,7 @@ dependencies = [
 [project.optional-dependencies]
 scripts = ["scipy>=1.7"]
 data = ["ucimlrepo>=0.0.3"]
-test = ["pytest>=7.0", "scipy>=1.7"]
+test = ["pytest>=7.0", "pytest-cov>=4.0", "scipy>=1.7"]
 docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.24", "ruff"]
 
 [tool.pytest.ini_options]
@@ -57,3 +57,15 @@ Qmes = [
     "_models/regression/*",
     "Qsun/LICENSE",
 ]
+
+[tool.mutmut]
+# Mutation testing (run on Linux/WSL: mutmut does not support Windows).
+# Scope: the three core logic modules; vendored Qsun and data scripts
+# are out of scope, mirroring the coverage configuration.
+source_paths = ["Qmes"]
+only_mutate = [
+    "Qmes/recommender/pairwise.py",
+    "Qmes/recommender/selection.py",
+    "Qmes/inference/runner.py",
+]
+pytest_add_cli_args_test_selection = ["tests/"]
