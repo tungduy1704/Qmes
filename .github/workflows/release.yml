@@ -1,0 +1,58 @@
+name: Release
+
+# CD pipeline: build, smoke-test, and publish to PyPI when a GitHub
+# release is published. Publishing uses PyPI Trusted Publishing (OIDC),
+# so no API token is stored in the repository; the "pypi" environment
+# and the trusted publisher must be configured once on pypi.org.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build sdist and wheel
+        run: |
+          pip install build twine
+          python -m build
+          twine check dist/*
+
+      - name: Smoke-test the wheel
+        # Install the built wheel (not the repo checkout) and verify the
+        # headline promise: the bundled default recommenders load and
+        # predict without any repo files present.
+        run: |
+          pip install dist/*.whl
+          cd /tmp
+          python -c "from Qmes import load_default_recommender; import numpy as np; r = load_default_recommender('classification'); print(r.predict(np.zeros(22))['top_k'])"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

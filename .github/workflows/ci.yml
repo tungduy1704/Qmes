@@ -24,8 +24,8 @@ jobs:
       - name: Install package and test dependencies
         run: pip install -e ".[test]"
 
-      - name: Run tests
-        run: pytest
+      - name: Run tests with coverage
+        run: pytest --cov --cov-fail-under=90
 
   docs:
     runs-on: ubuntu-latest
