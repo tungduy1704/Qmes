@@ -2,7 +2,7 @@
 
 <p style="font-size: 1.3rem; font-weight: 500;">Quantum Meta-learning for Encoding Selection</p>
 
-Qmes recommends the most suitable quantum encoding circuit for a tabular dataset - without running quantum evaluation at inference time.
+Qmes recommends the most suitable quantum encoding circuit for a tabular dataset with no quantum evaluation at inference time.
 
 [![CI](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml/badge.svg)](https://github.com/tungduy1704/Qmes/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://github.com/tungduy1704/Qmes)
@@ -19,8 +19,8 @@ and this must be repeated for every candidate.
 
 Qmes solves this with meta-learning:
 
-1. **Offline**: evaluate 7 candidate circuits on 105 classification datasets and 86 regression datasets, build a meta-dataset of (complexity measures → best circuit).
-2. **Online**: for a new dataset, extract complexity features in seconds, query a pre-trained recommender, get a ranked circuit list - no quantum evaluation needed.
+1. **Offline**: evaluate 7 candidate circuits on 105 classification datasets and 86 regression benchmarks, build a meta-dataset of (complexity measures $\rightarrow$ circuit).
+2. **Online**: for a new dataset, extract complexity features in seconds, query a pre-trained recommender, get a ranked circuit list.
 
 ## Quick example
 
@@ -43,8 +43,8 @@ print(result["top_k"])
 
 | Task | Metric | Meta-features |
 |---|---|---|
-| Tabular classification | MCC (kernel SVC) | 22-dim Problexity |
-| Tabular regression | R² (kernel Ridge) | 12-dim Problexity |
+| Tabular classification | MCC (kernel SVC) | 22-dim |
+| Tabular regression | R² (kernel Ridge) | 12-dim |
 
 ## Quick install
 
@@ -55,10 +55,6 @@ pip install git+https://github.com/tungduy1704/Qmes.git
 !!! note
     A PyPI release (`pip install Qmes`) is planned alongside the paper
     publication.
-
-## 7 candidate circuits
-
-`unit`, `SRx`, `RY`, `HERx`, `RY_CX`, `ZFM`, `HD`
 
 ## Citation
 
@@ -74,11 +70,7 @@ If you use Qmes in your research, please cite:
       primaryClass={quant-ph},
       url={https://arxiv.org/abs/2604.19076}, 
 }
-```
 
-If you use Qmes, please also cite Qsun, the quantum simulator bundled with this package:
-
-```bibtex
 @article{Nguyen_2022,
 doi = {10.1088/2632-2153/ac5997},
 url = {https://doi.org/10.1088/2632-2153/ac5997},
@@ -92,5 +84,4 @@ author = {Nguyen, Quoc Chuong and Ho, Le Bin and Nguyen Tran, Lan and Nguyen, Hu
 title = {Qsun: an open-source platform towards practical quantum machine learning applications},
 journal = {Machine Learning: Science and Technology},
 abstract = {Currently, quantum hardware is restrained by noises and qubit numbers. Thus, a quantum virtual machine (QVM) that simulates operations of a quantum computer on classical computers is a vital tool for developing and testing quantum algorithms before deploying them on real quantum computers. Various variational quantum algorithms (VQAs) have been proposed and tested on QVMs to surpass the limitations of quantum hardware. Our goal is to exploit further the VQAs towards practical applications of quantum machine learning (QML) using state-of-the-art quantum computers. In this paper, we first introduce a QVM named Qsun, whose operation is underlined by quantum state wavefunctions. The platform provides native tools supporting VQAs. Especially using the parameter-shift rule, we implement quantum differentiable programming essential for gradient-based optimization. We then report two tests representative of QML: quantum linear regression and quantum neural network.}
-}
 ```
