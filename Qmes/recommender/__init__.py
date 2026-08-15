@@ -13,7 +13,7 @@ from Qmes.recommender.selection import (
 )
 
 # task_type -> default metric_name. Manual duplicate of
-# ClassificationEvaluator.metric_name / RegressionEvaluator.metric_name —
+# ClassificationEvaluator.metric_name / RegressionEvaluator.metric_name -
 # keep in sync by hand if those change.
 _DEFAULT_METRIC_NAME = {
     "classification": "MCC",

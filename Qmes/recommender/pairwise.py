@@ -36,8 +36,8 @@ class PairwiseRecommender:
 
     Typical usage:
 
-    - ``load_default_recommender(task)`` — pre-trained bundle, ready to use.
-    - ``get_recommender(task, clf, ...)`` then ``fit()`` — retrain your own.
+    - ``load_default_recommender(task)`` - pre-trained bundle, ready to use.
+    - ``get_recommender(task, clf, ...)`` then ``fit()`` - retrain your own.
 
     Attributes
     ----------
@@ -106,7 +106,7 @@ class PairwiseRecommender:
         ----------
         meta_features : (n_datasets, d) meta-feature matrix
             Row i must correspond to pivot_scores.columns[i]. Alignment is
-            positional — if a DataFrame is passed, only its .values are used,
+            positional - if a DataFrame is passed, only its .values are used,
             not its index.
         pivot_scores : DataFrame, index=circuits, columns=datasets
             Values = primary metric (MCC, R², etc.)

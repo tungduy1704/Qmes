@@ -1,7 +1,7 @@
 # Evaluators
 
 An evaluator (the *Oracle*) scores every circuit in the pool on a dataset
-via cross-validated quantum-kernel methods. It is used **offline only** —
+via cross-validated quantum-kernel methods. It is used **offline only** -
 to build the meta-dataset labels and to validate recommendations. Inference
 never touches it.
 

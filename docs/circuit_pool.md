@@ -39,7 +39,7 @@ Every circuit induces a quantum fidelity kernel
 $K(\boldsymbol{x}, \boldsymbol{x}') = |\langle\phi(\boldsymbol{x})|\phi(\boldsymbol{x}')\rangle|^2$,
 computed by [`compute_kernel_matrix`](api/circuits.md). Building this
 matrix costs $\mathcal{O}(n^2)$ circuit-state overlaps per dataset per
-circuit - the cost Qmes's recommender avoids at inference time.
+circuit, the cost Qmes's recommender avoids at inference time.
 
 ## Extending the pool
 
@@ -52,5 +52,5 @@ registry.CIRCUIT_POOL["my_circuit"] = my_encode_fn
 
 To ship it in a recommendation model, evaluate it on your benchmark
 datasets with an [Evaluator](api/evaluators.md) and refit the
-[Recommender](api/recommender.md) on the augmented meta-dataset — see
+[Recommender](api/recommender.md) on the augmented meta-dataset - see
 [Advanced Usage](advanced_usage.md#3-retrain-a-pairwiserecommender).

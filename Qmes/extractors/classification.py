@@ -3,7 +3,7 @@
 Meta-feature extraction for tabular classification.
 Uses problexity: 22 Lorena complexity measures.
 
-Input : X (n_samples, n_features), y (n_samples,) — binary or multiclass
+Input : X (n_samples, n_features), y (n_samples,) - binary or multiclass
 Output: 22-dim vector
 
 Scaling: problexity requires data in [0, 1]. Extractor handles scaling internally.
@@ -64,8 +64,7 @@ def _compute_problexity(X: np.ndarray, y: np.ndarray, k_seeds: int = _K_SEEDS) -
 class ClassificationExtractor(BaseExtractor):
     """Meta-feature extractor for tabular classification.
 
-    Produces 22-dim vector:
-        [22 Lorena measures]
+    Produces 22-dim vector
     """
 
     @property

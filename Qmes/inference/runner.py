@@ -31,7 +31,7 @@ def preprocess_new_dataset(
         2. Impute missing values + cast to float64
         3. Subsample to max_samples (random by default; stratified if
            stratify=True). The classification data loader stratifies by
-           default — pass stratify=True to mirror it.
+           default - pass stratify=True to mirror it.
 
     Parameters
     ----------
@@ -99,7 +99,7 @@ def recommend(
 
     The end-to-end inference entry point: extracts meta-features from
     (X, y), queries the pre-trained recommender, and returns a ranked
-    list of circuits — no quantum evaluation at inference time.
+    list of circuits - no quantum evaluation at inference time.
 
     Parameters
     ----------
@@ -117,7 +117,7 @@ def recommend(
         Number of top circuits to return.
     preprocess : bool, default=True
         If True, run preprocess_new_dataset (encode categoricals, impute,
-        subsample) before extraction. Scaling is NOT done here — the
+        subsample) before extraction. Scaling is NOT done here - the
         extractor handles its own scaling.
     stratify : bool, default=False
         If True, use stratified subsampling during preprocessing.
@@ -196,7 +196,7 @@ def evaluate_recommendation(
     ----------
     datasets : dict[str, tuple[ndarray, ndarray]]
         Mapping of dataset name to (X, y). Each dataset is evaluated
-        independently, out-of-sample — not the LOO in-sample evaluation
+        independently, out-of-sample - not the LOO in-sample evaluation
         of run_loo_evaluation.
     extractor : BaseExtractor
         Matching the task_type of recommender and evaluator.

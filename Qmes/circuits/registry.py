@@ -26,7 +26,7 @@ except ``HD`` which encodes three angles per qubit). All circuits are
 implemented in the bundled Qsun simulator.
 
 The pool is a plain dict and intentionally extensible: registering a new
-circuit is adding an entry (``CIRCUIT_POOL["name"] = fn``) — no
+circuit is adding an entry (``CIRCUIT_POOL["name"] = fn``) - no
 subclassing required. If the new circuit expects inputs in ``[0, 1]``
 rather than rotation angles in ``[0, pi]``, also add its name to
 ``UNIT_RANGE_CIRCUITS``.
@@ -39,7 +39,7 @@ The evaluators pick the ``MinMaxScaler`` feature range per circuit from
 this set. Only ``unit`` needs ``[0, 1]`` out of the box: its amplitude
 encoding computes ``sqrt(x)`` and ``sqrt(1 - x)``, which is undefined
 outside that interval. Getting this wrong for a custom circuit does not
-raise — it silently degrades the kernel (see the Advanced Usage guide).
+raise - it silently degrades the kernel (see the Advanced Usage guide).
 """
 
 def get_circuit_names() -> list[str]:
@@ -86,7 +86,7 @@ def compute_kernel_matrix(X1, X2, circuit_fn):
     ``K[i, j] = |<phi(x1_i)|phi(x2_j)>|^2``, where ``phi`` is the feature
     map induced by *circuit_fn*. Every sample is encoded once
     (``n1 + n2`` circuit simulations), then all pairwise overlaps are
-    taken — this is the O(n^2) cost that Qmes avoids at inference time.
+    taken - this is the O(n^2) cost that Qmes avoids at inference time.
 
     Parameters
     ----------

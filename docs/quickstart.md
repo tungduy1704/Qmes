@@ -65,7 +65,7 @@ print("Vote counts:", result['votes'])
 
 | Key | Type | Description |
 |---|---|---|
-| `ranking` | `list[str]` | All 7 circuits sorted by OvO votes |
+| `ranking` | `list[str]` | All 7 circuits sorted by votes in descending order |
 | `top_k` | `list[str]` | First `top_k` elements of `ranking` (default: 3) |
 | `votes` | `dict[str, int]` | Raw vote count per circuit |
 | `meta_features` | `np.ndarray` | Complexity features extracted from your dataset |

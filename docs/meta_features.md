@@ -10,25 +10,25 @@ Each category below is summarized in one line to convey what it captures;
 [problexity](https://problexity.readthedocs.io/en/latest/) has the exact
 formula for every individual measure.
 
-## Classification — 22 measures
+## Classification
 
 | Category | Measures | What it captures |
 |---|---|---|
-| [Feature-based](https://problexity.readthedocs.io/en/latest/feature_based_api.html) | f1, f1v, f2, f3, f4 | How informative individual features are for separating classes — via their range, spread, and overlap. |
+| [Feature-based](https://problexity.readthedocs.io/en/latest/feature_based_api.html) | f1, f1v, f2, f3, f4 | How informative individual features are for separating classes - via their range, spread, and overlap. |
 | [Linearity](https://problexity.readthedocs.io/en/latest/linearity_api.html) | l1, l2, l3 | Whether the classes are linearly separable — the error and nonlinearity of linear classifiers fit to the data. |
-| [Neighborhood](https://problexity.readthedocs.io/en/latest/neighborhood_api.html) | n1, n2, n3, n4, t1, lsc | Presence and density of same- vs. different-class points in local neighborhoods — nearest-neighbor distances, boundary analysis, local set cardinality. |
-| [Network](https://problexity.readthedocs.io/en/latest/network_api.html) | density, cls_coef, hubs | Structure of the data seen as a graph — edge density, clustering tendency, hub connectivity among same-class instances. |
+| [Neighborhood](https://problexity.readthedocs.io/en/latest/neighborhood_api.html) | n1, n2, n3, n4, t1, lsc | Presence and density of same- vs. different-class points in local neighborhoods - nearest-neighbor distances, boundary analysis, local set cardinality. |
+| [Network](https://problexity.readthedocs.io/en/latest/network_api.html) | density, cls_coef, hubs | Structure of the data seen as a graph - edge density, clustering tendency, hub connectivity among same-class instances. |
 | [Dimensionality](https://problexity.readthedocs.io/en/latest/dimensionality_api.html) | t2, t3, t4 | Sparsity and intrinsic dimensionality (e.g. PCA-based). |
-| [Class imbalance](https://problexity.readthedocs.io/en/latest/class_imbalance_api.html) | c1, c2 | Degree of imbalance in the class distribution — entropy and class-proportion ratios. |
+| [Class imbalance](https://problexity.readthedocs.io/en/latest/class_imbalance_api.html) | c1, c2 | Degree of imbalance in the class distribution - entropy and class-proportion ratios. |
 
-## Regression — 12 measures
+## Regression
 
 | Category | Measures | What it captures |
 |---|---|---|
-| [Correlation](https://problexity.readthedocs.io/en/latest/correlation_api.html) | c1, c2, c3, c4 | How strongly features relate to the target, and how much of the data such relationships explain — rank correlation and correlation-guided example elimination. |
-| [Linearity](https://problexity.readthedocs.io/en/latest/linearity_api.html) | l1, l2 | How well a linear function fits — residual error of a multivariate linear regression. |
-| [Smoothness](https://problexity.readthedocs.io/en/latest/smoothness_api.html) | s1, s2, s3 | Whether nearby inputs have similar outputs — minimum-spanning-tree distances and nearest-neighbor prediction error. |
-| [Geometry](https://problexity.readthedocs.io/en/latest/geometry_api.html) | l3, s4, t2 | Spatial structure — model sensitivity to interpolated points and the samples-to-features ratio. |
+| [Correlation](https://problexity.readthedocs.io/en/latest/correlation_api.html) | c1, c2, c3, c4 | How strongly features relate to the target, and how much of the data such relationships explain - rank correlation and correlation-guided example elimination. |
+| [Linearity](https://problexity.readthedocs.io/en/latest/linearity_api.html) | l1, l2 | How well a linear function fits - residual error of a multivariate linear regression. |
+| [Smoothness](https://problexity.readthedocs.io/en/latest/smoothness_api.html) | s1, s2, s3 | Whether nearby inputs have similar outputs - minimum-spanning-tree distances and nearest-neighbor prediction error. |
+| [Geometry](https://problexity.readthedocs.io/en/latest/geometry_api.html) | l3, s4, t2 | Spatial structure - model sensitivity to interpolated points and the samples-to-features ratio. |
 
 See the [problexity documentation](https://problexity.readthedocs.io/en/latest/)
 for the precise definition of each measure.

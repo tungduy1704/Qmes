@@ -3,7 +3,7 @@
 Meta-feature extraction for tabular regression.
 Uses problexity (mode='regression'): 12 complexity measures.
 
-Input : X (n_samples, n_features), y (n_samples,) — continuous target
+Input : X (n_samples, n_features), y (n_samples,) - continuous target
 Output: 12-dim vector
 
 Scaling: problexity requires data in [0, 1]. Extractor handles scaling of X and y internally.
@@ -63,8 +63,7 @@ def _compute_problexity_regression(
 class RegressionExtractor(BaseExtractor):
     """Meta-feature extractor for tabular regression.
 
-    Produces 12-dim vector:
-        [12 Lorena measures]    
+    Produces 12-dim vector
     """
 
     @property

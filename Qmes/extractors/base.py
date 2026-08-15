@@ -10,7 +10,7 @@ Output: (vector: np.ndarray shape (d,), feature_names: list[str])
     - NaN/Inf in the vector are replaced with 0.0 (safe fallback)
 
 Scaling: each concrete extractor handles its own internal scaling.
-Base class does NOT scale — each library requires different conventions.
+Base class does NOT scale - each library requires different conventions.
 """
 from __future__ import annotations
 
@@ -184,7 +184,7 @@ class BaseExtractor(ABC):
             by this method's signature as a forward-compatibility hook for
             a future unsupervised extractor, but neither extractor
             currently shipped (``ClassificationExtractor``,
-            ``RegressionExtractor``) supports it — both raise
+            ``RegressionExtractor``) supports it - both raise
             ``ValueError`` if ``y`` is ``None``, so a bare-ndarray entry
             is caught, logged, and skipped rather than silently succeeding.
 

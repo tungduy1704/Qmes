@@ -67,7 +67,7 @@ def select_features_mi(
     """Rank meta-features by mutual information and return index subsets.
 
     MI is computed between each meta-feature and `labels` (the best circuit
-    per dataset — a categorical target), then features are ranked
+    per dataset - a categorical target), then features are ranked
     descending. Used at training time to test how few meta-features still
     yield a good recommender.
 
@@ -76,7 +76,7 @@ def select_features_mi(
     meta_features : ndarray, shape (n_datasets, d)
         Meta-feature matrix, one row per dataset.
     labels : ndarray, shape (n_datasets,)
-        Categorical target — the best circuit for each dataset, e.g.
+        Categorical target - the best circuit for each dataset, e.g.
         ``pivot_scores.idxmax(axis=0)``. MI is computed via
         mutual_info_classif, so this must be the circuit label, NOT the
         dataset's own y.

@@ -1,6 +1,6 @@
 # Advanced Usage
 
-This page covers building your own extractor, circuit, and recommender -
+This page covers building your own extractor, circuit, and recommender  - 
 the pieces you'd use to extend Qmes beyond the bundled 7 circuits and
 22/12-dim Problexity meta-features. Every code block on this page has been
 run end-to-end; outputs shown are the actual printed results.
@@ -110,8 +110,8 @@ recommend(X_new, y_new, extractor=ext, recommender=rec_bad)
 
 ## 2. Custom circuit + evaluator
 
-Circuits live in `Qmes.circuits.registry.CIRCUIT_POOL`, a plain
-`{name: callable}` dict. Registering a new one means adding an entry - no
+Circuits stay in `Qmes.circuits.registry.CIRCUIT_POOL`, a plain
+`{name: callable}` dict. Registering a new one means adding an entry, no
 subclassing required. This example wires in `HZY_CZ_encode`, one of the
 parameterized encoders already in `Qsun.Qencodes`, with frozen random
 parameters so the circuit is deterministic:
@@ -156,7 +156,7 @@ print({k: round(v, 4) for k, v in scores.items()})
     quietly lost its ability to tell datapoints apart.
 
     Here's the actual effect on `HZY`, measured at the point where the
-    evaluator computes the kernel matrix — same data, same circuit, same
+    evaluator computes the kernel matrix - same data, same circuit, same
     frozen params, only the `MinMaxScaler` range differs:
 
     ```python
@@ -244,7 +244,7 @@ print(out1["ranking"] == out2["ranking"])  # True
 ### Gotcha: non-JSON-serializable classifier params
 
 `save()` calls `json.dump()` on `classifier.get_params()`. If any param is
-itself an object — e.g. `AdaBoostClassifier(estimator=DecisionTreeClassifier())` -
+itself an object - e.g. `AdaBoostClassifier(estimator=DecisionTreeClassifier())` -
 this fails immediately with a `TypeError`, not a confusing error somewhere
 in `load()` later:
 
