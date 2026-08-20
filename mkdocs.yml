@@ -1,7 +1,7 @@
 site_name: Qmes
 site_description: >-
-  Quantum Meta-learning for Encoding Selection — recommends quantum encoding
-  circuits for tabular datasets without quantum evaluation at inference time.
+  "Quantum Meta-learning for Encoding Selection in Quantum Kernel Methods 
+  - recommends optimal choice for quantum encoding circuits without additional quantum evaluation at inference time."
 site_url: https://tungduy1704.github.io/Qmes
 repo_url: https://github.com/tungduy1704/Qmes
 repo_name: tungduy1704/Qmes
