@@ -22,5 +22,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - 7 candidate circuits: unit, SRx, RY, HERx, RY_CX, ZFM, HD
 - Pluggable architecture via abstract base classes: BaseExtractor, BaseEvaluator
 - Bundled Qsun quantum simulator (Qsun v1.0, MIT License)
-- Test suite: 48 tests across 5 files, CI passing on Python 3.10/3.11/3.12
+- Test suite: 81 tests across 5 files, CI passing on Python 3.10/3.11/3.12
 - Documentation: mkdocs-material site at https://tungduy1704.github.io/Qmes/
