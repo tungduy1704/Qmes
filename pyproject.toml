@@ -1,14 +1,14 @@
 [project]
 name = "Qmes"
 version = "0.1.0"
-description = "Quantum Meta-learning for Encoding Selection — recommends quantum encoding circuits for tabular datasets without quantum evaluation at inference time."
+description = "Quantum Meta-learning for Encoding Selection in Quantum Kernel Methods - recommends optimal choice for quantum encoding circuits without additional quantum evaluation at inference time."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE", "NOTICE", "Qmes/Qsun/LICENSE"]
 authors = [
     { name = "Dao Duy Tung" },
-    { name = "Nguyen Quoc Chuong" },
+    { name = "Quoc Chuong Nguyen" },
     { name = "Vu Tuan Hai" },
     { name = "Le Bin Ho" },
     { name = "Lan Nguyen Tran" },
