@@ -19,9 +19,9 @@ Wilcoxon signed-rank on paired per-dataset regret vectors
 
 Reported candidate
 ------------------
-kNN_top5 — selected by LOO Mean_Regret with a Top3_Tied (A3) tiebreak,
-not by Mean_Regret alone (kNN_top10 has lower regret but worse A3; see
-recommender_clf_summary and the paper's Model Selection section).
+kNN_top10 — selected by LOO Mean_Regret alone (lowest regret among all
+evaluated configurations; see recommender_clf_summary and the paper's
+Model Selection section).
 
 Usage
 -----
@@ -48,7 +48,7 @@ PIVOT_PATH = ROOT / "results" / "pivot_mcc_classification_600samples.csv"
 
 # Best config selected by LOO Mean_Regret (recommender_clf_summary_600samples.csv)
 BEST_CLF    = KNeighborsClassifier()
-BEST_SUBSET = "top5"
+BEST_SUBSET = "top10"
 K_VALUES    = [5, 10, 15, 20]
 
 

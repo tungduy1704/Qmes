@@ -14,7 +14,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   RegressionEvaluator (kernel Ridge + R²)
 - PairwiseRecommender: OvO kNN meta-learner, shared across task types
 - Pre-trained default recommenders shipped in `Qmes/_models/`:
-  kNN_top5 (classification, regret=0.0183), kNN_top10 (regression, regret=0.0150), 
+  kNN_top10 (classification, regret=0.0165), kNN_top10 (regression, regret=0.0150), 
 - Public API: `recommend`, `load_default_recommender`, `get_extractor`,
   `get_evaluator`, `get_recommender`, `evaluate_recommendation`,
   `preprocess_new_dataset`, `run_loo_evaluation`, `filter_degenerate_datasets`,

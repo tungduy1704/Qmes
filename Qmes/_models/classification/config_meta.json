@@ -1,7 +1,7 @@
 {
-  "config_name": "kNN_top5",
+  "config_name": "kNN_top10",
   "classifier": "kNN",
-  "feature_subset": "top5",
+  "feature_subset": "top10",
   "tied_threshold": 0.01,
   "n_train_datasets": 105,
   "selected_feature_names": [
@@ -9,11 +9,16 @@
     "l3",
     "f1v",
     "l2",
-    "density"
+    "density",
+    "lsc",
+    "t2",
+    "cls_coef",
+    "f1",
+    "t1"
   ],
   "loo_metrics": {
-    "Tied": 0.619,
-    "Top3_Tied": 0.9048,
-    "Mean_Regret": 0.018317
+    "Tied": 0.581,
+    "Top3_Tied": 0.8476,
+    "Mean_Regret": 0.01647
   }
 }
