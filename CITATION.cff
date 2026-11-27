@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite both the Qmes paper and the Qsun simulator."
+message: "If you use this software, please cite the Qmes paper."
 title: "Qmes: Quantum Meta-learning for Encoding Selection"
 version: 0.1.0
 date-released: 2026-XX-XX
@@ -23,17 +23,22 @@ authors:
     affiliation: "University of Science, Vietnam National University, Ho Chi Minh City, Vietnam"
 preferred-citation:
   type: article
-  title: "Towards Automated Selection of Quantum Encoding Circuits via Meta-Learning"
+  title: "Qmes: Quantum meta-learning for encoding selection in quantum kernel methods"
   authors:
-    - family-names: "Dao"
-      given-names: "Duy Tung"
+    - family-names: "Tung"
+      given-names: "Dao Duy"
     - family-names: "Nguyen"
       given-names: "Quoc Chuong"
-    - family-names: "Vu"
-      given-names: "Tuan Hai"
+    - family-names: "Hai"
+      given-names: "Vu Tuan"
     - family-names: "Ho"
       given-names: "Le Bin"
-    - family-names: "Nguyen Tran"
-      given-names: "Lan"
-  year: 2026
-  notes: "arXiv:2604.19076 [quant-ph] - provisional; to be updated on publication."
+    - family-names: "Tran"
+      given-names: "Lan Nguyen"
+  journal: "Computer Physics Communications"
+  volume: 332
+  start: 110521
+  year: 2027
+  issn: "0010-4655"
+  doi: "10.1016/j.cpc.2026.110521"
+  url: "https://www.sciencedirect.com/science/article/pii/S0010465526005023"
